@@ -50,11 +50,6 @@ public class GameOfLifeBoard {
                 }
             }
         }
-        }
-
-
-
-
 
     }
 
