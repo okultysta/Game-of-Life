@@ -46,13 +46,15 @@ public class GameOfLifeBoard {
                 for(int j=board[0].length-2;j>=1;j--) {
                     System.out.print(board[i][j] + " ");
                 }
+                System.out.println();
             }
         }
-
         public void doStep(){
         int alive=0;
-        for(int i=board.length-1;i>=0;i--){
-            for(int j=board[0].length-1;j>=0;j--){
+        boolean[][] temporary;
+        temporary = new boolean[board.length-2][board[0].length-2];
+        for(int i=board.length-2;i>=1;i--){
+            for(int j=board[0].length-2;j>=1;j--){
                 alive=0;
                 for(int k=i-1;k<=i+1;k++){
                     for(int l=j-1;l<=j+1;l++){
@@ -69,13 +71,20 @@ public class GameOfLifeBoard {
                         case(3):
                             break;
                         default:
-                            board[i][j]=false;
+                            temporary[i][j]=false;
                     }
                 else
                     if(alive==3)
-                        board[i][j]=true;
+                        temporary[i][j]=true;
                 }
             }
+        for(int i=1; i<board.length-1; i++){
+            for(int j=1; j<board[0].length-1; j++){
+                board[i][j]=temporary[i-1][j-1];
+            }
+        }
+
+
         }
 
     }
