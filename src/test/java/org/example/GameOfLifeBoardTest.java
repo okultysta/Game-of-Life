@@ -41,11 +41,10 @@ class GameOfLifeBoardTest {
                     }
                 }
                 if (initialBoard[i][j]) {
-                    alive--;
-                    switch (alive) {
-                        case 2:
-                        case 3:
+                    switch (--alive) {
+                        case 2, 3:
                             assertTrue(newBoard[i][j]);
+                            break;
                         default:
                             assertFalse(newBoard[i][j]);
                             break;

@@ -6,7 +6,7 @@ public class GameOfLifeBoard {
     //table, which serves as game board
     private boolean[][] board;
 
-    // constructor initlializing the board with random boolean values, the board dimensions are given as parameters
+    // constructor initializing the board with random boolean values, the board dimensions are given as parameters
     public GameOfLifeBoard(int m, int n) {
         Random r = new Random();
         this.board = new boolean[m + 2][n + 2];
@@ -105,13 +105,13 @@ public class GameOfLifeBoard {
     //getter returning the COPY of the state of the board, not the actual one
     public boolean[][] getBoard() {
         wrap();
-        boolean[][] copiedBoard = new boolean[board.length][board[0].length];
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                copiedBoard[i][j] = board[i][j];
+        boolean[][] copiedBoard = new boolean[board.length - 2][board[0].length - 2];
+        for (int i = 1; i < board.length - 1; i++) {
+            for (int j = 1; j < board[0].length - 1; j++) {
+                copiedBoard[i - 1][j - 1] = board[i][j];
             }
         }
-        return board;
+        return copiedBoard;
     }
 }
 
