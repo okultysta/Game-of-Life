@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+//Test checking if the board is initialized properly and with different content for each initlialization.
 class GameOfLifeBoardTest {
 
     @Test
@@ -21,6 +21,7 @@ class GameOfLifeBoardTest {
 
         assertNotEquals(same, 0);
     }
+    //Checking if the doStep() method correctly changes the layout of cells in the board.
     @Test
     public void doStepTest(){
         GameOfLifeBoard board1 = new GameOfLifeBoard(3, 3);
