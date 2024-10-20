@@ -80,7 +80,7 @@ public class GameOfLifeBoard {
                 if (board[i][j]) {
                     switch (--alive) {
                         case (2), (3):
-                            temporary [i-1][j-1] = true;
+                            temporary[i - 1][j - 1] = true;
                             break;
                         default:
                             temporary[i - 1][j - 1] = false;
