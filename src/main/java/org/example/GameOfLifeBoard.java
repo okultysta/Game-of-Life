@@ -10,8 +10,8 @@ public class GameOfLifeBoard {
     public GameOfLifeBoard(int m, int n) {
         Random r = new Random();
         this.board = new boolean[m + 2][n + 2];
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
                 board[i][j] = r.nextBoolean();
             }
         }
@@ -79,8 +79,8 @@ public class GameOfLifeBoard {
                 //if the cell is alive and has 2 or 3 neighbours also alive, then stays alive, otherway it dies
                 if (board[i][j]) {
                     switch (--alive) {
-                        case (2):
-                        case (3):
+                        case (2), (3):
+                            temporary [i-1][j-1] = true;
                             break;
                         default:
                             temporary[i - 1][j - 1] = false;
