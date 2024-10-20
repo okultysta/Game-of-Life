@@ -67,9 +67,9 @@ public class GameOfLifeBoard {
                         alive--;
 
                 if(board[i][j])
-                    switch(alive){
-                        case(2):
-                        case(3):
+                    switch (alive) {
+                        case 2:
+                        case 3:
                             break;
                         default:
                             temporary[i-1][j-1]=false;
