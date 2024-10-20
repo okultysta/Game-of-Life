@@ -21,25 +21,26 @@ class GameOfLifeBoardTest {
 
         assertNotEquals(same, 0);
     }
+
     //Checking if the doStep() method correctly changes the layout of cells in the board.
     @Test
-    public void doStepTest(){
+    public void doStepTest() {
         GameOfLifeBoard board1 = new GameOfLifeBoard(3, 3);
-        boolean [][] initialBoard = board1.getBoard();
+        boolean[][] initialBoard = board1.getBoard();
         board1.doStep();
         int alive;
-        boolean [][] newBoard = board1.getBoard();
-        for(int i = 1; i < initialBoard.length-1; i++){
-            for(int j = 1; j < initialBoard[i].length-1; j++){
-                alive=0;
-                for(int k=i-1;k<=i+1;k++){
-                    for(int l=j-1;l<=j+1;l++){
-                        if(initialBoard[k][l]){
+        boolean[][] newBoard = board1.getBoard();
+        for (int i = 1; i < initialBoard.length - 1; i++) {
+            for (int j = 1; j < initialBoard[i].length - 1; j++) {
+                alive = 0;
+                for (int k = i - 1; k <= i + 1; k++) {
+                    for (int l = j - 1; l <= j + 1; l++) {
+                        if (initialBoard[k][l]) {
                             alive++;
                         }
                     }
                 }
-                if(initialBoard[i][j]) {
+                if (initialBoard[i][j]) {
                     alive--;
                     switch (alive) {
                         case 2:
@@ -49,11 +50,10 @@ class GameOfLifeBoardTest {
                             assertFalse(newBoard[i][j]);
                             break;
                     }
+                } else {
+                    if (alive == 3)
+                        assertTrue(newBoard[i][j]);
                 }
-                else{
-                        if(alive==3)
-                            assertTrue(newBoard[i][j]);
-                    }
 
 
             }
