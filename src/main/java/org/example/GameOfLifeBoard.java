@@ -22,6 +22,7 @@ public class GameOfLifeBoard {
     //method adding the missing cells around the main board, necessary for counting the amount of alive cells
 
     //method printing the board on screen
+    /*
     public void print() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -30,6 +31,8 @@ public class GameOfLifeBoard {
             System.out.println();
         }
     }
+    */
+
 
     //method changing the state of the board, according to rules of the algorithm
     public void doSimulationStep() {

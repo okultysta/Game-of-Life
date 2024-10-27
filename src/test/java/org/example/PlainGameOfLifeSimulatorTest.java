@@ -11,7 +11,7 @@ public class PlainGameOfLifeSimulatorTest {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator);
         boolean[][] initialBoard = board1.getBoard();
-        simulator.doStep(board1);
+        board1.doSimulationStep();
         int alive;
         for (int i = 0; i < initialBoard.length; i++) {
             for (int j = 0; j < initialBoard[i].length; j++) {
@@ -32,10 +32,12 @@ public class PlainGameOfLifeSimulatorTest {
                             assertFalse(board1.getBoard()[i][j]);
                             break;
                     }
-                } else {
-                    if (alive == 3)
+                } else
+                    if (alive == 3) {
                         assertTrue(board1.getBoard()[i][j]);
-                }
+                    }
+
+
             }
         }
     }

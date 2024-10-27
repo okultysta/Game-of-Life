@@ -30,7 +30,7 @@ public class PlainGameOfLifeSimulator implements GameOfLifeSimulator {
                 //if the cell is alive and has 2 or 3 neighbours also alive, then stays alive, otherway it dies
                 if (board.getBoard()[i][j]) {
                     switch (--alive) {
-                        case (2), (3):
+                        case 2, 3:
                             temporary[i][j] = true;
                             break;
                         default:

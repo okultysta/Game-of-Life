@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameOfLifeBoardTest {
     //Test checking if the board is initialized properly and with different content for each initlialization.
     @Test
-    public void testBoardInitialization() {
+    public void boardInitializationTest() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator);
         GameOfLifeBoard board2 = new GameOfLifeBoard(3, 4, simulator);
@@ -24,7 +24,7 @@ class GameOfLifeBoardTest {
 
     //Test checking getter and setter
     @Test
-    public void testSetCell() {
+    public void setCellTest() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator);
         board1.setCell(1, 1, false);

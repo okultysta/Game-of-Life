@@ -7,10 +7,24 @@
     <groupId>org.example</groupId>
     <artifactId>GameOfLife</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <description>Projekt grupy laboratoryjnej LCH_PON_1400</description>
+    <developers>
+        <developer>
+            <id>251586</id>
+            <name>Kacper Maziarz</name>
+            <email>251586@edu.p.lodz.pl</email>
+        </developer>
+        <developer>
+            <id>251482</id>
+            <name>Jędrzej Bartoszewski</name>
+            <email>251482@edu.p.lodz.pl</email>
+        </developer>
+    </developers>
+
 
     <properties>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 <build>
@@ -115,6 +129,17 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.25.0</version>
+
+            </plugin>
         </plugins>
     </reporting>
     <dependencies>
@@ -123,6 +148,26 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.10.3</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-core</artifactId>
+            <version>7.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-java</artifactId>
+            <version>7.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-javascript</artifactId>
+            <version>7.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-jsp</artifactId>
+            <version>7.5.0</version>
         </dependency>
     </dependencies>
 
