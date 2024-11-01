@@ -4,17 +4,17 @@ import java.util.Random;
 
 public class GameOfLifeBoard {
     //table, which serves as game board
-    private boolean[][] board;
+    private GameOfLifeCell[][] board;
     private GameOfLifeSimulator simulator;
 
     // constructor initializing the board with random boolean values, the board dimensions are given as parameters
     public GameOfLifeBoard(int m, int n, GameOfLifeSimulator simulator) {
         Random r = new Random();
-        this.board = new boolean[m][n];
+        this.board = new GameOfLifeCell[m][n];
         this.simulator = simulator;
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                board[i][j] = r.nextBoolean();
+                board[i][j] = new GameOfLifeCell(r.nextBoolean());
             }
         }
     }
@@ -40,8 +40,8 @@ public class GameOfLifeBoard {
     }
 
     //getter returning the COPY of the state of the board, not the actual one
-    public boolean[][] getBoard() {
-        boolean[][] copiedBoard = new boolean[board.length][board[0].length];
+    public GameOfLifeCell[][] getBoard() {
+        GameOfLifeCell[][] copiedBoard = new GameOfLifeCell[board.length][board[0].length];
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 copiedBoard[i][j] = board[i][j];
@@ -50,8 +50,8 @@ public class GameOfLifeBoard {
         return copiedBoard;
     }
 
-    public void setCell(int x, int y, boolean value) {
-        board[x][y] = value;
+    public void setCell(int x, int y,boolean value) {
+        board[x][y].updateState(value);
     }
 }
 

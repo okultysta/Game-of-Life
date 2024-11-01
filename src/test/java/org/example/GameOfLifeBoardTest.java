@@ -28,8 +28,8 @@ class GameOfLifeBoardTest {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator);
         board1.setCell(1, 1, false);
-        assertFalse(board1.getBoard()[1][1]);
+        assertFalse(board1.getBoard()[1][1].isAlive());
         board1.setCell(1, 1, true);
-        assertTrue(board1.getBoard()[1][1]);
+        assertTrue(board1.getBoard()[1][1].isAlive());
     }
 }
