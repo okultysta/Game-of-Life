@@ -1,20 +1,39 @@
 package org.example;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameOfLifeBoard {
     //table, which serves as game board
     private GameOfLifeCell[][] board;
     private GameOfLifeSimulator simulator;
+    private GameOfLifeColumnRow[] columns;
+    private GameOfLifeColumnRow[] rows;
 
     // constructor initializing the board with random boolean values, the board dimensions are given as parameters
     public GameOfLifeBoard(int m, int n, GameOfLifeSimulator simulator) {
+        this.columns = new GameOfLifeColumnRow[n];
+        this.rows = new GameOfLifeColumnRow[m];
         Random r = new Random();
         this.board = new GameOfLifeCell[m][n];
         this.simulator = simulator;
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 board[i][j] = new GameOfLifeCell(r.nextBoolean());
+            }
+        }
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                rows[i] = new GameOfLifeColumnRow();
+                rows[i].addCell(board[i][j]);
+            }
+        }
+
+        for (int i = 0; i < board[0].length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                columns[i] = new GameOfLifeColumnRow();
+                columns[i].addCell(board[j][i]);
             }
         }
 
