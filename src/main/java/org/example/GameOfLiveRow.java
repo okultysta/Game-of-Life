@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.ArrayList;
+
 public class GameOfLiveRow {
-    Arraylist<GameOfLifeCell> cells;
+    private ArrayList<GameOfLifeCell> cells = new ArrayList<GameOfLifeCell>();
 }

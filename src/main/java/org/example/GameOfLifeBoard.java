@@ -17,6 +17,20 @@ public class GameOfLifeBoard {
                 board[i][j] = new GameOfLifeCell(r.nextBoolean());
             }
         }
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                for (int k = i - 1; k <= i + 1; k++) {
+                    for (int l = j - 1; l <= j + 1; l++) {
+                        if (board[i][j] != board[(k + board.length) % board.length]
+                                [(l + board[0].length) % board[0].length]) {
+                            board[i][j].addNeighbor(board[(k + board.length) % board.length]
+                                    [(l + board[0].length) % board[0].length]);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     //method adding the missing cells around the main board, necessary for counting the amount of alive cells
@@ -50,8 +64,8 @@ public class GameOfLifeBoard {
         return copiedBoard;
     }
 
-    public void setCell(int x, int y,boolean value) {
-        board[x][y].updateState(value);
+    public void setCell(int x, int y, boolean value) {
+        board[x][y].setCell(value);
     }
 }
 
