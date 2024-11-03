@@ -24,15 +24,15 @@ public class GameOfLifeBoard {
         }
 
         for (int i = 0; i < board.length; i++) {
+            rows[i] = new GameOfLifeColumnRow();
             for (int j = 0; j < board[0].length; j++) {
-                rows[i] = new GameOfLifeColumnRow();
                 rows[i].addCell(board[i][j]);
             }
         }
 
         for (int i = 0; i < board[0].length; i++) {
+            columns[i] = new GameOfLifeColumnRow();
             for (int j = 0; j < board.length; j++) {
-                columns[i] = new GameOfLifeColumnRow();
                 columns[i].addCell(board[j][i]);
             }
         }
@@ -65,8 +65,6 @@ public class GameOfLifeBoard {
         }
     }*/
 
-
-
     //method changing the state of the board, according to rules of the algorithm
     public void doSimulationStep() {
         simulator.doStep(this);
@@ -85,6 +83,14 @@ public class GameOfLifeBoard {
 
     public void setCell(int x, int y, boolean value) {
         board[x][y].setCell(value);
+    }
+
+    public GameOfLifeColumnRow getRow(int x) {
+        return rows[x];
+    }
+
+    public GameOfLifeColumnRow getColumn(int x) {
+        return columns[x];
     }
 }
 
