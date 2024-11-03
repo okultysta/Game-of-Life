@@ -6,10 +6,11 @@ import java.util.List;
 public class GameOfLifeCell {
     private boolean alive;
     private boolean nextState;
-    private ArrayList<GameOfLifeCell> listOfNeighbors = new ArrayList<GameOfLifeCell>();
+    private ArrayList<GameOfLifeCell> listOfNeighbors;
 
     public GameOfLifeCell(boolean alive) {
         this.alive = alive;
+        listOfNeighbors = new ArrayList<GameOfLifeCell>();
     }
 
     public void addNeighbor(GameOfLifeCell neighbor) {
@@ -38,6 +39,8 @@ public class GameOfLifeCell {
             }
         } else if (aliveNeighbors == 3) {
             nextState = true;
+        } else {
+            nextState = false;
         }
 
         return nextState;

@@ -3,7 +3,11 @@ package org.example;
 import java.util.ArrayList;
 
 public class GameOfLifeColumnRow {
-    private ArrayList<GameOfLifeCell> cells = new ArrayList<GameOfLifeCell>();
+    private ArrayList<GameOfLifeCell> cells;
+
+    public GameOfLifeColumnRow() {
+        cells = new ArrayList<GameOfLifeCell>();
+    }
 
     public void addCell(GameOfLifeCell cell) {
         cells.add(cell);
