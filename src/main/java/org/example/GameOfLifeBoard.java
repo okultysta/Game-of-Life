@@ -59,12 +59,12 @@ public class GameOfLifeBoard {
     public void print() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                System.out.print(board[i][j] + " ");
+                System.out.print(board[i][j].isAlive() + " ");
             }
             System.out.println();
         }
-    }
-    */
+    }*/
+
 
 
     //method changing the state of the board, according to rules of the algorithm
