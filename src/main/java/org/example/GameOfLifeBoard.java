@@ -1,6 +1,6 @@
 package org.example;
 
-import java.util.ArrayList;
+
 import java.util.Random;
 
 public class GameOfLifeBoard {
@@ -52,18 +52,6 @@ public class GameOfLifeBoard {
         }
     }
 
-    public GameOfLifeBoard(boolean b, int m, int n, GameOfLifeSimulator simulator) {
-        this.columns = new GameOfLifeColumnRow[n];
-        this.rows = new GameOfLifeColumnRow[m];
-        Random r = new Random();
-        this.board = new GameOfLifeCell[m][n];
-        this.simulator = simulator;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                board[i][j] = new GameOfLifeCell(r.nextBoolean());
-            }
-        }
-    }
 
 
     //method adding the missing cells around the main board, necessary for counting the amount of alive cells

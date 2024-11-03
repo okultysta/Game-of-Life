@@ -36,7 +36,7 @@ class GameOfLifeBoardTest {
     @Test
     public void testCreateColumnRow() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
-        GameOfLifeBoard board = new GameOfLifeBoard(true, 3, 3, simulator);
+        GameOfLifeBoard board = new GameOfLifeBoard( 3, 3, simulator);
 
         GameOfLifeColumnRow column = board.createColumn(1);
         GameOfLifeCell cell = new GameOfLifeCell(true);
