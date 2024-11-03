@@ -32,4 +32,20 @@ class GameOfLifeBoardTest {
         board1.setCell(1, 1, true);
         assertTrue(board1.getBoard()[1][1].isAlive());
     }
+
+    @Test
+    public void testCreateColumnRow() {
+        PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
+        GameOfLifeBoard board = new GameOfLifeBoard(true, 3, 3, simulator);
+
+        GameOfLifeColumnRow column = board.createColumn(1);
+        GameOfLifeCell cell = new GameOfLifeCell(true);
+        column.addCell(cell);
+        assertEquals(column, board.getColumn(1));
+
+        GameOfLifeColumnRow row = board.createRow(1);
+        GameOfLifeCell cell1 = new GameOfLifeCell(true);
+        row.addCell(cell1);
+        assertEquals(row, board.getRow(1));
+    }
 }

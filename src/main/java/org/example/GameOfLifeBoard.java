@@ -24,14 +24,14 @@ public class GameOfLifeBoard {
         }
 
         for (int i = 0; i < board.length; i++) {
-            rows[i] = new GameOfLifeColumnRow();
+            this.createRow(i);
             for (int j = 0; j < board[0].length; j++) {
                 rows[i].addCell(board[i][j]);
             }
         }
 
         for (int i = 0; i < board[0].length; i++) {
-            columns[i] = new GameOfLifeColumnRow();
+            this.createColumn(i);
             for (int j = 0; j < board.length; j++) {
                 columns[i].addCell(board[j][i]);
             }
@@ -52,6 +52,20 @@ public class GameOfLifeBoard {
         }
     }
 
+    public GameOfLifeBoard(boolean b, int m, int n, GameOfLifeSimulator simulator) {
+        this.columns = new GameOfLifeColumnRow[n];
+        this.rows = new GameOfLifeColumnRow[m];
+        Random r = new Random();
+        this.board = new GameOfLifeCell[m][n];
+        this.simulator = simulator;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] = new GameOfLifeCell(r.nextBoolean());
+            }
+        }
+    }
+
+
     //method adding the missing cells around the main board, necessary for counting the amount of alive cells
 
     //method printing the board on screen
@@ -64,6 +78,16 @@ public class GameOfLifeBoard {
             System.out.println();
         }
     }*/
+
+    public GameOfLifeColumnRow createColumn(int index) {
+        columns[index] = new GameOfLifeColumnRow();
+        return columns[index];
+    }
+
+    public GameOfLifeColumnRow createRow(int index) {
+        rows[index] = new GameOfLifeColumnRow();
+        return rows[index];
+    }
 
     //method changing the state of the board, according to rules of the algorithm
     public void doSimulationStep() {
