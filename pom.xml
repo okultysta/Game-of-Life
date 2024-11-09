@@ -20,7 +20,13 @@
             <email>251482@edu.p.lodz.pl</email>
         </developer>
     </developers>
-
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

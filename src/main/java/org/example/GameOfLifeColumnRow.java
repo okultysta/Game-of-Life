@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GameOfLifeColumnRow {
     private ArrayList<GameOfLifeCell> cells;
@@ -32,4 +33,21 @@ public class GameOfLifeColumnRow {
         }
         return count;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GameOfLifeColumnRow that)) {
+            return false;
+        }
+        return Objects.equals(cells, that.cells);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(cells);
+    }
 }
+
