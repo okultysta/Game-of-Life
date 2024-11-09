@@ -16,7 +16,7 @@ class GameOfLifeBoardTest {
         int same = 3 * 4;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
-                if (board1.getBoard().get(i).get(j).isAlive() == board2.getBoard().get(i).get(j).isAlive())
+                if (board1.getBoard()[i][j].isAlive() == board2.getBoard()[i][j].isAlive())
                     same--;
             }
         }
@@ -29,9 +29,9 @@ class GameOfLifeBoardTest {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator);
         board1.setCell(1, 1, false);
-        assertFalse(board1.getBoard().get(1).get(1).isAlive());
+        assertFalse(board1.getBoard()[1][1].isAlive());
         board1.setCell(1, 1, true);
-        assertTrue(board1.getBoard().get(1).get(1).isAlive());
+        assertTrue(board1.getBoard()[1][1].isAlive());
     }
 
     @Test
