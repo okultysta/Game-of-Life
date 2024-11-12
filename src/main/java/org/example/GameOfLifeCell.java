@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class GameOfLifeCell {
@@ -54,4 +55,24 @@ public class GameOfLifeCell {
         this.alive = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GameOfLifeCell that)) return false;
+        return alive == that.alive && nextState == that.nextState && Objects.equals(listOfNeighbors, that.listOfNeighbors);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(alive, nextState, listOfNeighbors);
+    }
+
+    @Override
+    public String toString() {
+        return "GameOfLifeCell{" +
+                "alive=" + alive +
+                ", nextState=" + nextState +
+                ", listOfNeighbors=" + listOfNeighbors +
+                '}';
+    }
 }

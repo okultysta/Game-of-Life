@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -102,6 +103,28 @@ public class GameOfLifeBoard {
 
     public GameOfLifeColumnRow getColumn(int x) {
         return columns.get(x);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GameOfLifeBoard that)) return false;
+        return Objects.deepEquals(board, that.board) && Objects.equals(simulator, that.simulator) && Objects.equals(columns, that.columns) && Objects.equals(rows, that.rows);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.deepHashCode(board), simulator, columns, rows);
+    }
+
+    @Override
+    public String toString() {
+        return "GameOfLifeBoard{" +
+                "board=" + Arrays.toString(board) +
+                ", simulator=" + simulator +
+                ", columns=" + columns +
+                ", rows=" + rows +
+                '}';
     }
 }
 
