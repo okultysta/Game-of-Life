@@ -72,7 +72,6 @@ public class GameOfLifeCell {
         return "GameOfLifeCell{" +
                 "alive=" + alive +
                 ", nextState=" + nextState +
-                ", listOfNeighbors=" + listOfNeighbors +
                 '}';
     }
 }

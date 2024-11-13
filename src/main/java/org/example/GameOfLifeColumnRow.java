@@ -49,5 +49,10 @@ public class GameOfLifeColumnRow {
     public int hashCode() {
         return Objects.hashCode(cells);
     }
+
+    @Override
+    public String toString(){
+        return cells.toString();
+    }
 }
 
