@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Random;
 
 
-
 public class GameOfLifeBoard {
     //table, which serves as game board
     private GameOfLifeCell[][] board;
@@ -28,11 +27,11 @@ public class GameOfLifeBoard {
         }
 
         for (int i = 0; i < board.length; i++) {
-            this.rows.set(i,createRow(i));
+            this.rows.set(i, createRow(i));
         }
 
         for (int i = 0; i < board[0].length; i++) {
-            this.columns.set(i,createColumn(i));
+            this.columns.set(i, createColumn(i));
         }
 
         for (int i = 0; i < board.length; i++) {
@@ -107,8 +106,8 @@ public class GameOfLifeBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GameOfLifeBoard that)) return false;
+        if (this == o) {return true;}
+        if (!(o instanceof GameOfLifeBoard that)) {return false;}
         return Objects.deepEquals(board, that.board) && Objects.equals(simulator, that.simulator) && Objects.equals(columns, that.columns) && Objects.equals(rows, that.rows);
     }
 

@@ -37,19 +37,21 @@ class GameOfLifeBoardTest {
     @Test
     public void testCreateColumnRow() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
-        GameOfLifeBoard board = new GameOfLifeBoard( 3, 3, simulator);
+        GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
         GameOfLifeColumnRow column = board.createColumn(1);
         Assertions.assertEquals(column, board.getColumn(1));
         GameOfLifeColumnRow row = board.createRow(1);
         assertEquals(row, board.getRow(1));
     }
+
     @Test
-    public void testHashCode(){
+    public void testHashCode() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
         GameOfLifeBoard board2 = new GameOfLifeBoard(3, 3, simulator);
         assertNotEquals(board.hashCode(), board2.hashCode());
     }
+
     @Test
     public void testEquals() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
