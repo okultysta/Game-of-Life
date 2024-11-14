@@ -102,7 +102,8 @@ public class GameOfLifeCellTest {
         GameOfLifeCell neighbour2 = new GameOfLifeCell(true);
         cell.addNeighbor(neighbour1);
         cell.addNeighbor(neighbour2);
-        assertEquals("GameOfLifeCell{" + "alive=" + cell.isAlive() + ", nextState=" + cell.nextState() + "}", cell.toString());
+        assertEquals("GameOfLifeCell{" + "alive=" + cell.isAlive()
+                + ", nextState=" + cell.nextState() + "}", cell.toString());
     }
 
 }

@@ -57,9 +57,14 @@ public class GameOfLifeCell {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GameOfLifeCell that)) return false;
-        return alive == that.alive && nextState == that.nextState && Objects.equals(listOfNeighbors, that.listOfNeighbors);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GameOfLifeCell that)) {
+            return false;
+        }
+        return alive == that.alive && nextState == that.nextState
+                && Objects.equals(listOfNeighbors, that.listOfNeighbors);
     }
 
     @Override
@@ -69,9 +74,8 @@ public class GameOfLifeCell {
 
     @Override
     public String toString() {
-        return "GameOfLifeCell{" +
-                "alive=" + alive +
-                ", nextState=" + nextState +
-                '}';
+        return "GameOfLifeCell{"
+                + "alive=" + alive
+                + ", nextState=" + nextState + '}';
     }
 }

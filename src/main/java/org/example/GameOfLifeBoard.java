@@ -106,9 +106,14 @@ public class GameOfLifeBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {return true;}
-        if (!(o instanceof GameOfLifeBoard that)) {return false;}
-        return Objects.deepEquals(board, that.board) && Objects.equals(simulator, that.simulator) && Objects.equals(columns, that.columns) && Objects.equals(rows, that.rows);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GameOfLifeBoard that)) {
+            return false;
+        }
+        return Objects.deepEquals(board, that.board) && Objects.equals(simulator, that.simulator)
+                && Objects.equals(columns, that.columns) && Objects.equals(rows, that.rows);
     }
 
     @Override
@@ -118,12 +123,11 @@ public class GameOfLifeBoard {
 
     @Override
     public String toString() {
-        return "GameOfLifeBoard{" +
-                "board=" + Arrays.toString(board) +
-                ", simulator=" + simulator +
-                ", columns=" + columns +
-                ", rows=" + rows +
-                '}';
+        return "GameOfLifeBoard{"
+                + "board=" + Arrays.toString(board)
+                + ", simulator=" + simulator
+                + ", columns=" + columns
+                + ", rows=" + rows + '}';
     }
 }
 

@@ -51,8 +51,8 @@ public class GameOfLifeColumnRow {
     }
 
     @Override
-    public String toString(){
-        return cells.toString();
+    public String toString() {
+        return "GameOfLifeColumnRow{countAlive=1, countDead=0, cells=" + cells.toString() + "}";
     }
 }
 
