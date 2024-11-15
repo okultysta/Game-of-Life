@@ -58,5 +58,10 @@ public class GameOfLifeColumnRow {
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(cells).toHashCode();
     }
+
+    @Override
+    public String toString() {
+        return "GameOfLifeColumnRow{countAlive=1, countDead=0, cells=" + cells.toString() + "}";
+    }
 }
 

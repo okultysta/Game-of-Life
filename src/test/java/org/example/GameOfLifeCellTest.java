@@ -78,8 +78,7 @@ public class GameOfLifeCellTest {
     }
 
     @Test
-    public void hashCodeTest()
-    {
+    public void hashCodeTest() {
         GameOfLifeCell cell = new GameOfLifeCell(true);
         GameOfLifeCell cell2 = new GameOfLifeCell(true);
         GameOfLifeCell cell3 = new GameOfLifeCell(false);
@@ -88,12 +87,23 @@ public class GameOfLifeCellTest {
     }
 
     @Test
-    public void equalsTest(){
+    public void equalsTest() {
         GameOfLifeCell cell = new GameOfLifeCell(true);
         GameOfLifeCell cell2 = new GameOfLifeCell(true);
         GameOfLifeCell cell3 = new GameOfLifeCell(false);
         assertEquals(cell, cell2);
         assertNotEquals(cell, cell3);
+    }
+
+    @Test
+    public void toStringTest() {
+        GameOfLifeCell cell = new GameOfLifeCell(true);
+        GameOfLifeCell neighbour1 = new GameOfLifeCell(true);
+        GameOfLifeCell neighbour2 = new GameOfLifeCell(true);
+        cell.addNeighbor(neighbour1);
+        cell.addNeighbor(neighbour2);
+        assertEquals("GameOfLifeCell{" + "alive=" + cell.isAlive()
+                + ", nextState=" + cell.nextState() + "}", cell.toString());
     }
 
 }
