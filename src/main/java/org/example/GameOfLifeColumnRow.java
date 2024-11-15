@@ -1,5 +1,9 @@
 package org.example;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -35,19 +39,24 @@ public class GameOfLifeColumnRow {
     }
 
     @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("cells", cells)
+                .toString();
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof GameOfLifeColumnRow that)) {
-            return false;
-        }
-        return Objects.equals(cells, that.cells);
+        if (this == o) return true;
+
+        if (!(o instanceof GameOfLifeColumnRow that)) return false;
+
+        return new EqualsBuilder().append(cells, that.cells).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(cells);
+        return new HashCodeBuilder(17, 37).append(cells).toHashCode();
     }
 }
 

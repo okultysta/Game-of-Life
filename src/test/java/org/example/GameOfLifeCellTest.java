@@ -35,7 +35,7 @@ public class GameOfLifeCellTest {
 
         //Case cell alive and more than 3 neighbours are alive
         assertFalse(cell.nextState());
-
+        //dodanie obserwatora
         //Case cell alive and exactly 3 neighbours are alive
         neighbour5.setCell(false);
         neighbour4.setCell(false);
