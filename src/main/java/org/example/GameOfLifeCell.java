@@ -2,6 +2,7 @@ package org.example;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -10,15 +11,15 @@ import java.util.Objects;
 public class GameOfLifeCell {
     private boolean alive;
     private boolean nextState;
-    private ArrayList<Boolean> listOfNeighbors;
+    private ArrayList<GameOfLifeCell> listOfNeighbors;
 
     public GameOfLifeCell(boolean alive) {
         this.alive = alive;
-        listOfNeighbors = new ArrayList<Boolean>();
+        listOfNeighbors = new ArrayList<GameOfLifeCell>();
     }
 
     public void addNeighbor(GameOfLifeCell neighbor) {
-        listOfNeighbors.add(neighbor.isAlive());
+        listOfNeighbors.add(neighbor);
     }
 
     public boolean isAlive() {
@@ -28,7 +29,7 @@ public class GameOfLifeCell {
     public boolean nextState() {
         int aliveNeighbors = 0;
         for (int i = 0; i < listOfNeighbors.size(); i++) {
-            if (listOfNeighbors.get(i)) {
+            if (listOfNeighbors.get(i).isAlive()) {
                 aliveNeighbors++;
             }
         }
@@ -60,24 +61,28 @@ public class GameOfLifeCell {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
 
-        if (!(o instanceof GameOfLifeCell that)) return false;
+        if (!(o instanceof GameOfLifeCell that)) {
+            return false;
+        }
 
-        return new EqualsBuilder().append(alive, that.alive).append(nextState, that.nextState).append(listOfNeighbors, that.listOfNeighbors).isEquals();
+        return new EqualsBuilder().append(alive, that.alive).append(nextState, that.nextState).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(alive).append(nextState).append(listOfNeighbors).toHashCode();
+        return new HashCodeBuilder(17, 37).append(alive).append(nextState).toHashCode();
     }
 
     @Override
     public String toString() {
-        return "GameOfLifeCell{" +
-                "alive=" + alive +
-                ", nextState=" + nextState +
-                ", listOfNeighbors=" + listOfNeighbors +
-                '}';
+        return new ToStringBuilder(this)
+                .append("alive", alive)
+                .append("nextState", nextState)
+                .append("listOfNeighbors", listOfNeighbors)
+                .toString();
     }
 }

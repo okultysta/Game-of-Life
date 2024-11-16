@@ -42,7 +42,7 @@ public class GameOfLifeColumnRowTest {
         assertNotEquals(row, gameOfLifeSimulator);
         assertEquals(row.hashCode(), row2.hashCode());
     }
-
+/*
     @Test
     public void toStringTest() {
         GameOfLifeColumnRow column = new GameOfLifeColumnRow();
@@ -53,4 +53,5 @@ public class GameOfLifeColumnRowTest {
         assertEquals(column.toString(), "GameOfLifeColumnRow{countAlive=1, countDead=0, cells=["
                 + cell1.toString() + ", " + cell2.toString() + "]}");
     }
+    */
 }

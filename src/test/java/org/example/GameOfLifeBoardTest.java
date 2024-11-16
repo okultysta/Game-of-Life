@@ -44,7 +44,7 @@ class GameOfLifeBoardTest {
         assertEquals(row, board.getRow(1));
     }
 
-    /*
+
     @Test
     public void testHashCode() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
@@ -60,6 +60,6 @@ class GameOfLifeBoardTest {
         GameOfLifeBoard board2 = new GameOfLifeBoard(3, 3, simulator);
         assertNotEquals(board, board2);
         assertNotEquals(board, simulator);
-    }*/
+    }
 
 }

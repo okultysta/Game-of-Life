@@ -47,9 +47,13 @@ public class GameOfLifeColumnRow {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
 
-        if (!(o instanceof GameOfLifeColumnRow that)) return false;
+        if (!(o instanceof GameOfLifeColumnRow that)) {
+            return false;
+        }
 
         return new EqualsBuilder().append(cells, that.cells).isEquals();
     }
@@ -59,9 +63,6 @@ public class GameOfLifeColumnRow {
         return new HashCodeBuilder(17, 37).append(cells).toHashCode();
     }
 
-    @Override
-    public String toString() {
-        return "GameOfLifeColumnRow{countAlive=1, countDead=0, cells=" + cells.toString() + "}";
-    }
+
 }
 
