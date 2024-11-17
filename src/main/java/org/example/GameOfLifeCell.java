@@ -1,7 +1,10 @@
 package org.example;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 public class GameOfLifeCell {
@@ -60,22 +63,24 @@ public class GameOfLifeCell {
         if (this == o) {
             return true;
         }
+
         if (!(o instanceof GameOfLifeCell that)) {
             return false;
         }
-        return alive == that.alive && nextState == that.nextState
-                && Objects.equals(listOfNeighbors, that.listOfNeighbors);
+
+        return new EqualsBuilder().append(alive, that.alive).append(nextState, that.nextState).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(alive, nextState, listOfNeighbors);
+        return new HashCodeBuilder(17, 37).append(alive).append(nextState).toHashCode();
     }
 
     @Override
     public String toString() {
-        return "GameOfLifeCell{"
-                + "alive=" + alive
-                + ", nextState=" + nextState + '}';
+        return new ToStringBuilder(this)
+                .append("alive", alive)
+                .append("nextState", nextState)
+                .toString();
     }
 }

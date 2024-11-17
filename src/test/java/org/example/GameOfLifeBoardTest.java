@@ -46,7 +46,7 @@ class GameOfLifeBoardTest {
         assertEquals(row, board.getRow(1));
     }
 
-    /*
+
     @Test
     public void testHashCode() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
@@ -60,17 +60,19 @@ class GameOfLifeBoardTest {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
         GameOfLifeBoard board2 = new GameOfLifeBoard(3, 3, simulator);
+        assertEquals(board, board);
         assertNotEquals(board, board2);
         assertNotEquals(board, simulator);
-    }*/
-
-    @Test
-    public void toStringTest() {
-        PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
-        GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
-        assertEquals(board.toString(), "GameOfLifeBoard{" + "board=" + Arrays.toString(board.getBoard())
-                + ", simulator=" + simulator + ", columns=" + board.getColumns()
-                + ", rows=" + board.getRows() + '}');
     }
 
+    @Test
+    void toStringTest() {
+        PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
+        GameOfLifeBoard board = new GameOfLifeBoard(2, 2, simulator);
+        assertTrue(board.toString().contains(Arrays.deepToString(board.getBoard())));
+        assertTrue(board.toString().contains(board.getColumn(0).toString()));
+        assertTrue(board.toString().contains(board.getRow(0).toString()));
+        assertTrue(board.toString().contains(board.getColumn(1).toString()));
+        assertTrue(board.toString().contains(board.getRow(1).toString()));
+    }
 }

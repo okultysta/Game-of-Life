@@ -1,8 +1,11 @@
 package org.example;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 
@@ -117,25 +120,27 @@ public class GameOfLifeBoard {
         if (this == o) {
             return true;
         }
+
         if (!(o instanceof GameOfLifeBoard that)) {
             return false;
         }
-        return Objects.deepEquals(board, that.board) && Objects.equals(simulator, that.simulator)
-                && Objects.equals(columns, that.columns) && Objects.equals(rows, that.rows);
+
+        return new EqualsBuilder().append(board, that.board).append(simulator, that.simulator)
+                .append(columns, that.columns).append(rows, that.rows).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.deepHashCode(board), simulator, columns, rows);
+        return new HashCodeBuilder(17, 37).append(board).append(simulator).append(columns).append(rows).toHashCode();
     }
 
     @Override
     public String toString() {
-        return "GameOfLifeBoard{"
-                + "board=" + Arrays.toString(board)
-                + ", simulator=" + simulator
-                + ", columns=" + columns
-                + ", rows=" + rows + '}';
+        return new ToStringBuilder(this)
+                .append("board", Arrays.deepToString(board))
+                .append("columns", columns)
+                .append("rows", rows)
+                .toString();
     }
 }
 
