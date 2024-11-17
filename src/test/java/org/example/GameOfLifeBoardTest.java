@@ -3,6 +3,8 @@ package org.example;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 //Zepsół delewoperski: Kacper Maziarz 251586, Jędrzej Bartoszewski 251482
 
@@ -61,5 +63,14 @@ class GameOfLifeBoardTest {
         assertNotEquals(board, board2);
         assertNotEquals(board, simulator);
     }*/
+
+    @Test
+    public void toStringTest() {
+        PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
+        GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
+        assertEquals(board.toString(), "GameOfLifeBoard{" + "board=" + Arrays.toString(board.getBoard())
+                + ", simulator=" + simulator + ", columns=" + board.getColumns()
+                + ", rows=" + board.getRows() + '}');
+    }
 
 }
