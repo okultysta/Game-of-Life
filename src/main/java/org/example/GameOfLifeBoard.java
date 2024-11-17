@@ -123,7 +123,7 @@ public class GameOfLifeBoard {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(board).append(simulator).append(columns).append(rows).toHashCode();
+        return new HashCodeBuilder(17, 37).append(Arrays.deepHashCode(board)).append(simulator).append(columns).append(rows).toHashCode();
     }
 
     @Override
