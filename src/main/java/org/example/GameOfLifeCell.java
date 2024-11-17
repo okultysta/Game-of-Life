@@ -5,7 +5,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 public class GameOfLifeCell {
@@ -82,7 +81,6 @@ public class GameOfLifeCell {
         return new ToStringBuilder(this)
                 .append("alive", alive)
                 .append("nextState", nextState)
-                .append("listOfNeighbors", listOfNeighbors)
                 .toString();
     }
 }

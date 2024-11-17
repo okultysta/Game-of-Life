@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 
@@ -130,8 +129,7 @@ public class GameOfLifeBoard {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("board", board)
-                .append("simulator", simulator)
+                .append("board", Arrays.deepToString(board))
                 .append("columns", columns)
                 .append("rows", rows)
                 .toString();

@@ -91,10 +91,13 @@ public class GameOfLifeCellTest {
         GameOfLifeCell cell = new GameOfLifeCell(true);
         GameOfLifeCell cell2 = new GameOfLifeCell(true);
         GameOfLifeCell cell3 = new GameOfLifeCell(false);
+        PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
+        assertEquals(cell, cell);
         assertEquals(cell, cell2);
         assertNotEquals(cell, cell3);
+        assertNotEquals(cell, simulator);
     }
-/*
+
     @Test
     public void toStringTest() {
         GameOfLifeCell cell = new GameOfLifeCell(true);
@@ -102,8 +105,8 @@ public class GameOfLifeCellTest {
         GameOfLifeCell neighbour2 = new GameOfLifeCell(true);
         cell.addNeighbor(neighbour1);
         cell.addNeighbor(neighbour2);
-        assertEquals("GameOfLifeCell{" + "alive=" + cell.isAlive()
-                + ", nextState=" + cell.nextState() + "}", cell.toString());
+        assertTrue(cell.toString().contains(String.valueOf(cell.isAlive())));
+        assertTrue(cell.toString().contains(String.valueOf(cell.nextState())));
     }
-*/
+
 }

@@ -20,14 +20,13 @@
             <email>251482@edu.p.lodz.pl</email>
         </developer>
     </developers>
-    <!-- licencja: MIT License -->
+    <!-- licencja: GPL License -->
     <!-- wybraliśmy ten wariant, ponieważ chcemy, żeby nasze oprogramowanie było ogólnie dostępne, -->
     <!-- oraz możliwe do wykorzystania wszędzie bez ograniczej, m, in, ze wsgl. na użyte pluginy -->
     <licenses>
         <license>
-            <name>MIT License</name>
-            <url>https://opensource.org/licenses/MIT</url>
-            <distribution>manual</distribution>
+            <name>GPL General Public v3.0</name>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 

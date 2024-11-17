@@ -3,6 +3,8 @@ package org.example;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 //Zepsół delewoperski: Kacper Maziarz 251586, Jędrzej Bartoszewski 251482
 
@@ -58,8 +60,19 @@ class GameOfLifeBoardTest {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
         GameOfLifeBoard board2 = new GameOfLifeBoard(3, 3, simulator);
+        assertEquals(board, board);
         assertNotEquals(board, board2);
         assertNotEquals(board, simulator);
     }
 
+    @Test
+    void toStringTest() {
+        PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
+        GameOfLifeBoard board = new GameOfLifeBoard(2, 2, simulator);
+        assertTrue(board.toString().contains(Arrays.deepToString(board.getBoard())));
+        assertTrue(board.toString().contains(board.getColumn(0).toString()));
+        assertTrue(board.toString().contains(board.getRow(0).toString()));
+        assertTrue(board.toString().contains(board.getColumn(1).toString()));
+        assertTrue(board.toString().contains(board.getRow(1).toString()));
+    }
 }
