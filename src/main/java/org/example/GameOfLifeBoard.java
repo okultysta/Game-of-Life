@@ -65,14 +65,6 @@ public class GameOfLifeBoard {
         }
     }*/
 
-    public List<GameOfLifeColumnRow> getColumns() {
-        return columns;
-    }
-
-    public List<GameOfLifeColumnRow> getRows() {
-        return rows;
-    }
-
     public GameOfLifeColumnRow createColumn(int index) {
         GameOfLifeColumnRow column = new GameOfLifeColumnRow();
         for (int i = 0; i < board.length; i++) {
