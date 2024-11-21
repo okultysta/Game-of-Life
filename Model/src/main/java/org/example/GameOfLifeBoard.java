@@ -28,29 +28,20 @@ public class GameOfLifeBoard {
                 board[i][j] = new GameOfLifeCell(r.nextBoolean());
             }
         }
+        setCellsNeighbours();
+        setLines();
+    }
 
-        for (int i = 0; i < board.length; i++) {
-            this.rows.set(i, createRow(i));
-        }
-
-        for (int i = 0; i < board[0].length; i++) {
-            this.columns.set(i, createColumn(i));
-        }
+    public GameOfLifeBoard (boolean[][] board, GameOfLifeSimulator simulator) {
+        this.board = new GameOfLifeCell[board.length][board[0].length];
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                for (int k = i - 1; k <= i + 1; k++) {
-                    for (int l = j - 1; l <= j + 1; l++) {
-                        if (board[i][j] != board[(k + board.length)
-                                % board.length][(l + board[0].length)
-                                % board[0].length]) {
-                            board[i][j].addNeighbor(board[(k + board.length)
-                                    % board.length][(l + board[0].length) % board[0].length]);
-                        }
-                    }
-                }
+                this.board[i][j] = new GameOfLifeCell(board[i][j]);
             }
         }
+        setCellsNeighbours();
+        setLines();
     }
 
 
@@ -134,6 +125,34 @@ public class GameOfLifeBoard {
                 .append("columns", columns)
                 .append("rows", rows)
                 .toString();
+    }
+
+    private void setCellsNeighbours() {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                for (int k = i - 1; k <= i + 1; k++) {
+                    for (int l = j - 1; l <= j + 1; l++) {
+                        if (board[i][j] != board[(k + board.length)
+                                % board.length][(l + board[0].length)
+                                % board[0].length]) {
+                            board[i][j].addNeighbor(board[(k + board.length)
+                                    % board.length][(l + board[0].length) % board[0].length]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void setLines() {
+        for (int i = 0; i < board.length; i++) {
+            this.rows.set(i, createRow(i));
+        }
+
+        for (int i = 0; i < board[0].length; i++) {
+            this.columns.set(i, createColumn(i));
+        }
+
     }
 }
 
