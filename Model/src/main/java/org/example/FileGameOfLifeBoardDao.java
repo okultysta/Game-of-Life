@@ -2,11 +2,11 @@ package org.example;
 
 import java.io.*;
 
-public class FileGameOfLifeDaoFactory implements Dao<GameOfLifeBoard>, AutoCloseable {
+public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable {
     private FileReader reader;
     private FileWriter writer;
 
-    public FileGameOfLifeDaoFactory(String filename) throws IOException {
+    public FileGameOfLifeBoardDao(String filename) throws IOException {
         this.reader = new FileReader(filename);
         this.writer = new FileWriter(filename);
     }
