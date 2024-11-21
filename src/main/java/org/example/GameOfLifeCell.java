@@ -73,14 +73,24 @@ public class GameOfLifeCell {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(alive).append(nextState).toHashCode();
+        ArrayList<Boolean> local = new ArrayList<>();
+        for (GameOfLifeCell cell : listOfNeighbors) {
+            local.add(cell.isAlive());
+        }
+        return new HashCodeBuilder(17, 37).append(alive)
+                        .append(nextState).append(local).toHashCode();
     }
 
     @Override
     public String toString() {
+        ArrayList<Boolean> local = new ArrayList<>();
+        for (GameOfLifeCell cell : listOfNeighbors) {
+            local.add(cell.isAlive());
+        }
         return new ToStringBuilder(this)
-                .append("alive", alive)
-                .append("nextState", nextState)
+                .append("alive: ", alive)
+                .append("nextState: ", nextState)
+                .append("listOfNeighbors: ", listOfNeighbors)
                 .toString();
     }
 }
