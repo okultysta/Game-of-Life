@@ -14,8 +14,9 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
     public GameOfLifeBoard read() throws RuntimeException {
 
         try (BufferedReader read = new BufferedReader(reader)) {
-            int firstDim = Integer.parseInt(read.readLine());
-            int secondDim = Integer.parseInt(read.readLine());
+            int firstDim = (Integer.parseInt(String.valueOf(read.read()))-'0');
+            read.skip(1);
+            int secondDim = (Integer.parseInt(String.valueOf(read.read()))-'0');
             boolean[][] board = new boolean[firstDim][secondDim];
             for (int i = 0; i < firstDim; i++) {
                 for (int j = 0; j < secondDim; j++) {
