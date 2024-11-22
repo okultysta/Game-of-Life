@@ -32,7 +32,7 @@ public class GameOfLifeBoard {
         setLines();
     }
 
-    public GameOfLifeBoard (boolean[][] board, GameOfLifeSimulator simulator) {
+    public GameOfLifeBoard(boolean[][] board, GameOfLifeSimulator simulator) {
         this.board = new GameOfLifeCell[board.length][board[0].length];
 
         for (int i = 0; i < board.length; i++) {
