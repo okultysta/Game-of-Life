@@ -1,6 +1,8 @@
 package org.example;
 
-public class PlainGameOfLifeSimulator implements GameOfLifeSimulator {
+import java.io.Serializable;
+
+public class PlainGameOfLifeSimulator implements GameOfLifeSimulator, Serializable {
 
     public PlainGameOfLifeSimulator() {
     }

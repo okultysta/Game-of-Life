@@ -4,47 +4,56 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 
-public class GameOfLifeBoard {
+public class GameOfLifeBoard implements Serializable {
     //table, which serves as game board
     private GameOfLifeCell[][] board;
     private GameOfLifeSimulator simulator;
     private List<GameOfLifeColumnRow> columns;
     private List<GameOfLifeColumnRow> rows;
+    private Dao<GameOfLifeBoard> dao;
 
     // constructor initializing the board with random boolean values, the board dimensions are given as parameters
-    public GameOfLifeBoard(int m, int n, GameOfLifeSimulator simulator) {
+    public GameOfLifeBoard(int m, int n, GameOfLifeSimulator simulator, Dao<GameOfLifeBoard> dao) {
         board = new GameOfLifeCell[m][n];
         this.columns = Arrays.asList(new GameOfLifeColumnRow[n]);
         this.rows = Arrays.asList(new GameOfLifeColumnRow[m]);
         Random r = new Random();
         this.simulator = simulator;
+        this.dao = dao;
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 board[i][j] = new GameOfLifeCell(r.nextBoolean());
             }
         }
-        setCellsNeighbours();
-        setLines();
-    }
-
-    public GameOfLifeBoard(boolean[][] board, GameOfLifeSimulator simulator) {
-        this.board = new GameOfLifeCell[board.length][board[0].length];
-        this.columns = Arrays.asList(new GameOfLifeColumnRow[board[0].length]);
-        this.rows = Arrays.asList(new GameOfLifeColumnRow[board.length]);
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                this.board[i][j] = new GameOfLifeCell(board[i][j]);
+                for (int k = i - 1; k <= i + 1; k++) {
+                    for (int l = j - 1; l <= j + 1; l++) {
+                        if (board[i][j] != board[(k + board.length)
+                                % board.length][(l + board[0].length)
+                                % board[0].length]) {
+                            board[i][j].addNeighbor(board[(k + board.length)
+                                    % board.length][(l + board[0].length) % board[0].length]);
+                        }
+                    }
+                }
             }
         }
-        setCellsNeighbours();
-        setLines();
-    }
+        for (int i = 0; i < board.length; i++) {
+            this.rows.set(i, createRow(i));
+        }
 
+        for (int i = 0; i < board[0].length; i++) {
+            this.columns.set(i, createColumn(i));
+        }
+
+    }
 
     //method printing the board on screen
     /*
@@ -109,14 +118,14 @@ public class GameOfLifeBoard {
             return false;
         }
 
-        return new EqualsBuilder().append(board, that.board).append(simulator, that.simulator)
-                .append(columns, that.columns).append(rows, that.rows).isEquals();
+        return new EqualsBuilder().append(board, that.board).append(columns, that.columns)
+                .append(rows, that.rows).isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(Arrays.deepHashCode(board))
-                .append(simulator).append(columns).append(rows).toHashCode();
+                .append(columns).append(rows).toHashCode();
     }
 
     @Override
@@ -128,33 +137,7 @@ public class GameOfLifeBoard {
                 .toString();
     }
 
-    private void setCellsNeighbours() {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                for (int k = i - 1; k <= i + 1; k++) {
-                    for (int l = j - 1; l <= j + 1; l++) {
-                        if (board[i][j] != board[(k + board.length)
-                                % board.length][(l + board[0].length)
-                                % board[0].length]) {
-                            board[i][j].addNeighbor(board[(k + board.length)
-                                    % board.length][(l + board[0].length) % board[0].length]);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
-    private void setLines() {
-        for (int i = 0; i < board.length; i++) {
-            this.rows.set(i, createRow(i));
-        }
-
-        for (int i = 0; i < board[0].length; i++) {
-            this.columns.set(i, createColumn(i));
-        }
-
-    }
 }
 
 

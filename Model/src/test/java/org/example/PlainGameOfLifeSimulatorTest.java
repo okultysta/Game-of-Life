@@ -11,7 +11,7 @@ public class PlainGameOfLifeSimulatorTest {
     @Test
     public void testDoStep() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
-        GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator);
+        GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator, new FileGameOfLifeBoardDao("123.ser'"));
         GameOfLifeCell[][] initialBoard = board1.getBoard();
         board1.doSimulationStep();
         int alive;
