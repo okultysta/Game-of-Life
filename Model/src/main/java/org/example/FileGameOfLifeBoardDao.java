@@ -3,61 +3,48 @@ package org.example;
 import java.io.*;
 
 public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable {
-    private FileReader reader;
-    private FileWriter writer;
+    private final String filename;
 
-    public FileGameOfLifeBoardDao(String filename) throws IOException {
-        this.reader = new FileReader(filename);
-        this.writer = new FileWriter(filename);
+    public FileGameOfLifeBoardDao(String filename) {
+        this.filename = filename;
     }
 
     public GameOfLifeBoard read() throws RuntimeException {
-
-        try (BufferedReader read = new BufferedReader(reader)) {
-            int firstDim = (Integer.parseInt(String.valueOf(read.read()))-'0');
-            read.skip(1);
-            int secondDim = (Integer.parseInt(String.valueOf(read.read()))-'0');
+        try (BufferedReader read = new BufferedReader(new FileReader(filename))) {
+            String[] dimensions = read.readLine().split(" ");
+            int firstDim = Integer.parseInt(dimensions[0]);
+            int secondDim = Integer.parseInt(dimensions[1]);
             boolean[][] board = new boolean[firstDim][secondDim];
             for (int i = 0; i < firstDim; i++) {
                 for (int j = 0; j < secondDim; j++) {
-                    board[i][j] = read.readLine().charAt(0) == '1';
+                    board[i][j] = read.readLine().equals("1");
                 }
             }
+
             GameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
             return new GameOfLifeBoard(board, simulator);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error reading from file", e);
         }
-
-
     }
 
     public void write(GameOfLifeBoard board) throws IOException {
-        try (BufferedWriter write = new BufferedWriter(writer)) {
+        try (BufferedWriter write = new BufferedWriter(new FileWriter(filename))) {
+
             write.write(board.getBoard().length + " " + board.getBoard()[0].length);
             write.newLine();
 
-            for (int i = 0; i < board.getBoard().length; i++) {
-                for (int j = 0; j < board.getBoard()[i].length; j++) {
-                    write.write(board.getBoard()[i][j].isAlive() ? "1" : "0");
+            for (GameOfLifeCell[] row : board.getBoard()) {
+                for (GameOfLifeCell cell : row) {
+                    write.write(cell.isAlive() ? "1" : "0");
+                    write.newLine();
                 }
-                write.newLine();
             }
         }
     }
 
     @Override
     public void close() throws IOException {
-        if (reader != null && writer != null) {
-            reader.close();
-            writer.close();
-        }
+
     }
 }
-
-
-
-
-
-
-

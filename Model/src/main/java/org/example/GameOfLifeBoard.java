@@ -34,7 +34,8 @@ public class GameOfLifeBoard {
 
     public GameOfLifeBoard(boolean[][] board, GameOfLifeSimulator simulator) {
         this.board = new GameOfLifeCell[board.length][board[0].length];
-
+        this.columns = Arrays.asList(new GameOfLifeColumnRow[board[0].length]);
+        this.rows = Arrays.asList(new GameOfLifeColumnRow[board.length]);
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 this.board[i][j] = new GameOfLifeCell(board[i][j]);

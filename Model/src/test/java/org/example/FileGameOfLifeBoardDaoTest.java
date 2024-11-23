@@ -9,33 +9,46 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FileGameOfLifeBoardDaoTest {
     private String filaName = "src/testFile.txt";
     private GameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
-    private GameOfLifeBoard board = new GameOfLifeBoard(3,5,simulator);
+    private GameOfLifeBoard board = new GameOfLifeBoard(1, 2, simulator);
 
 
     @Test
     public void FileGameOfLifeBoardDaoWriteTest() throws IOException {
-        BufferedReader read = new BufferedReader(new FileReader(filaName));
-        FileGameOfLifeBoardDao dao = new FileGameOfLifeBoardDao(filaName);
-        dao.write(board);
-        assertEquals(board.getBoard().length, (Integer.parseInt(String.valueOf(read.read()))-'0'));
-        read.skip(1);
-        assertEquals(board.getBoard()[0].length, (Integer.parseInt(String.valueOf(read.read()))-'0'));
-        read.skip(2);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filaName))) {
+            FileGameOfLifeBoardDao dao = new FileGameOfLifeBoardDao(filaName);
+            dao.write(board);
+        }
+        try (BufferedReader read = new BufferedReader(new FileReader(filaName))) {
+            String[] dimensions = read.readLine().split(" ");
+            assertEquals(1, Integer.parseInt(dimensions[0]));
+            assertEquals(2, Integer.parseInt(dimensions[1]));
 
-        String lineText = "";
-
-        for(int i = 0; i < board.getBoard().length; i++) {
-            for(int j = 0; j < board.getBoard()[i].length; j++) {
-                lineText = read.readLine();
+            for (GameOfLifeCell[] row : board.getBoard()) {
+                for (GameOfLifeCell cell : row) {
+                    String line = read.readLine();
+                    assertEquals(cell.isAlive() ? "1" : "0", line);
+                }
             }
-            assertEquals(lineText, read.readLine());
         }
     }
 
+
     @Test
     public void FileGameOfLifeBoardDaoReadTest() throws IOException {
-        FileGameOfLifeBoardDao dao = new FileGameOfLifeBoardDao(filaName);
-        GameOfLifeBoard board2 = dao.read();
-        assertEquals(board, board2);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filaName))) {
+            FileGameOfLifeBoardDao dao = new FileGameOfLifeBoardDao(filaName);
+            dao.write(board);
+            GameOfLifeBoard board2 = dao.read();
+            assertEquals(board.getBoard().length, board2.getBoard().length);
+            assertEquals(board.getBoard()[0].length, board2.getBoard()[0].length);
+            for (int i = 0; i < board.getBoard().length; i++) {
+                for (int j = 0; j < board.getBoard()[i].length; j++) {
+                    assertEquals(board.getBoard()[i][j], board2.getBoard()[i][j]);
+                }
+            }
+        }
+
+
     }
 }
+
