@@ -11,9 +11,15 @@ public class FileGameOfLifeBoardDaoTest {
     private String filename = "src/testFile.ser";
     private GameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
     private GameOfLifeBoardDaoFactory factory = new GameOfLifeBoardDaoFactory();
-    FileGameOfLifeBoardDao dao = new FileGameOfLifeBoardDao(filename);
-    private GameOfLifeBoard board = new GameOfLifeBoard(1, 2, simulator, dao);
+    private FileGameOfLifeBoardDao dao = factory.getFileDao(filename);
+    private GameOfLifeBoard board = new GameOfLifeBoard(1, 2, simulator);
 
+    public FileGameOfLifeBoardDaoTest() throws IOException {
+    }
+
+    private static class fakeClass implements Serializable {
+        int data =10;
+    }
 
     @Test
     public void FileGameOfLifeBoardDaoWriteTest() throws IOException {
@@ -36,7 +42,7 @@ public class FileGameOfLifeBoardDaoTest {
 
 
     @Test
-    public void FileGameOfLifeBoardDaoReadTest() throws IOException {
+    public void FileGameOfLifeBoardDaoReadTest() throws Exception {
         try (ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(filename))) {
             dao.write(board);
             GameOfLifeBoard board2 = dao.read();
@@ -57,14 +63,23 @@ public class FileGameOfLifeBoardDaoTest {
 
 
         assertThrows(FileNotFoundException.class, () -> new ObjectOutputStream(new FileOutputStream("")));
+        try (FileGameOfLifeBoardDao writer1 = new FileGameOfLifeBoardDao("")) {
+            assertThrows(RuntimeException.class, writer1::read);
+        }
 
-        FileGameOfLifeBoardDao writer1 = new FileGameOfLifeBoardDao("");
-        assertThrows(RuntimeException.class, writer1::read);
-    }
+        try (ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(filename))) {
+            writer.writeObject(new fakeClass());
+        }
+
+        try (FileGameOfLifeBoardDao dao = factory.getFileDao(filename)) {
+            assertThrows(RuntimeException.class, dao::read);
+        }
+
+}
 
     @Test
     public void FileGameOfLifeBoardDaoCloseTest() throws Exception {
-        FileGameOfLifeBoardDao writer1 = new FileGameOfLifeBoardDao(filename);
+        FileGameOfLifeBoardDao writer1 = factory.getFileDao(filename);
         assertDoesNotThrow(writer1::close);
 
     }

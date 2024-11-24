@@ -16,16 +16,16 @@ public class GameOfLifeBoard implements Serializable {
     private GameOfLifeSimulator simulator;
     private List<GameOfLifeColumnRow> columns;
     private List<GameOfLifeColumnRow> rows;
-    private Dao<GameOfLifeBoard> dao;
+    //private Dao<GameOfLifeBoard> dao;
 
     // constructor initializing the board with random boolean values, the board dimensions are given as parameters
-    public GameOfLifeBoard(int m, int n, GameOfLifeSimulator simulator, Dao<GameOfLifeBoard> dao) {
+    public GameOfLifeBoard(int m, int n, GameOfLifeSimulator simulator) {
         board = new GameOfLifeCell[m][n];
         this.columns = Arrays.asList(new GameOfLifeColumnRow[n]);
         this.rows = Arrays.asList(new GameOfLifeColumnRow[m]);
         Random r = new Random();
         this.simulator = simulator;
-        this.dao = dao;
+        //this.dao = dao;
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 board[i][j] = new GameOfLifeCell(r.nextBoolean());

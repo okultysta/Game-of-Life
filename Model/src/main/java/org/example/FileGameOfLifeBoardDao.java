@@ -10,8 +10,7 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
     }
 
     public GameOfLifeBoard read() throws RuntimeException {
-        try {
-            ObjectInputStream read = new ObjectInputStream(new FileInputStream(filename));
+        try (ObjectInputStream read = new ObjectInputStream(new FileInputStream(filename))) {
             return (GameOfLifeBoard) read.readObject();
         } catch (IOException e) {
             throw new RuntimeException("Error reading from file", e);
