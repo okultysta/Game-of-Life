@@ -61,7 +61,6 @@ public class FileGameOfLifeBoardDaoTest {
             throw new IOException(e);
         }
 
-
         assertThrows(FileNotFoundException.class, () -> new ObjectOutputStream(new FileOutputStream("")));
         try (FileGameOfLifeBoardDao writer1 = new FileGameOfLifeBoardDao("")) {
             assertThrows(RuntimeException.class, writer1::read);
