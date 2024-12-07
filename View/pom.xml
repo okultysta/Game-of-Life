@@ -4,15 +4,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pl.comp</groupId>
-    <artifactId>GameOfLifeProject</artifactId>
     <version>2.0-SNAPSHOT</version>
     <description>Projekt grupy laboratoryjnej LCH_PON_1400</description>
-    <packaging>pom</packaging>
-    <modules>
-        <module>Model</module>
-        <module>View</module>
-    </modules>
+
+    <repositories>
+        <repository>
+            <id>openjfx-repo</id>
+            <url>https://openjfx.io/maven</url>
+        </repository>
+    </repositories>
+
+    <parent>
+        <groupId>pl.comp</groupId>
+        <artifactId>GameOfLifeProject</artifactId>
+        <version>2.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>ViewProject</artifactId>
+    <packaging>jar</packaging>
     <developers>
         <developer>
             <id>251586</id>
@@ -47,7 +55,7 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.13.0</version>
             <configuration>
-                <release>21</release>
+                <release>23</release>
             </configuration>
         </plugin>
         <plugin>
@@ -153,16 +161,15 @@
                 <version>3.25.0</version>
 
             </plugin>
-            <!-- javaFX -->
+            <!-- javaFX-->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
+                <version>0.0.4</version>
                 <configuration>
                     <mainClass>com.example.MainApplication</mainClass>
                 </configuration>
             </plugin>
-
         </plugins>
     </reporting>
     <dependencies>
@@ -198,6 +205,21 @@
             <version>3.12.0</version>
         </dependency>
         <!--javaFX-->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>23.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>23.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>23.0.1</version>
+        </dependency>
 
 
     </dependencies>

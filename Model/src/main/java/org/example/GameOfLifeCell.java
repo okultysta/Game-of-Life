@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class GameOfLifeCell implements Serializable {
+public class GameOfLifeCell implements Serializable, Comparable<GameOfLifeCell>, Cloneable {
     private boolean alive;
     private boolean nextState;
     private ArrayList<GameOfLifeCell> listOfNeighbors;
@@ -78,8 +78,7 @@ public class GameOfLifeCell implements Serializable {
         for (GameOfLifeCell cell : listOfNeighbors) {
             local.add(cell.isAlive());
         }
-        return new HashCodeBuilder(17, 37).append(alive)
-                        .append(nextState).append(local).toHashCode();
+        return new HashCodeBuilder(17, 37).append(alive).append(nextState).append(local).toHashCode();
     }
 
     @Override
@@ -88,10 +87,32 @@ public class GameOfLifeCell implements Serializable {
         for (GameOfLifeCell cell : listOfNeighbors) {
             local.add(cell.isAlive());
         }
-        return new ToStringBuilder(this)
-                .append("alive: ", alive)
-                .append("nextState: ", nextState)
-                .append("listOfNeighbors: ", listOfNeighbors)
-                .toString();
+        return new ToStringBuilder(this).append("alive: ", alive).append("nextState: ", nextState)
+                .append("listOfNeighbors: ", listOfNeighbors).toString();
+    }
+
+    @Override
+    public int compareTo(GameOfLifeCell o) {
+        if (this.alive != o.alive) {
+            return 0;
+        }
+        if (this.nextState != o.nextState) {
+            return 0;
+        }
+        if (!this.listOfNeighbors.equals(o.listOfNeighbors)) {
+            return 0;
+        }
+        return 1;
+    }
+
+    @Override
+    public GameOfLifeCell clone() {
+        try {
+            GameOfLifeCell clone = (GameOfLifeCell) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

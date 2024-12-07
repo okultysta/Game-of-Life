@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable, Serializable {
+public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable {
     private final String filename;
 
     public FileGameOfLifeBoardDao(String filename) {

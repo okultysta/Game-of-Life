@@ -16,7 +16,6 @@ public class GameOfLifeBoard implements Serializable {
     private GameOfLifeSimulator simulator;
     private List<GameOfLifeColumnRow> columns;
     private List<GameOfLifeColumnRow> rows;
-    //private Dao<GameOfLifeBoard> dao;
 
     // constructor initializing the board with random boolean values, the board dimensions are given as parameters
     public GameOfLifeBoard(int m, int n, GameOfLifeSimulator simulator) {
