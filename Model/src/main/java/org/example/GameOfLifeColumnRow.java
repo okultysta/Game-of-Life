@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class GameOfLifeColumnRow implements Serializable {
+public class GameOfLifeColumnRow implements Serializable, Cloneable {
     private ArrayList<GameOfLifeCell> cells;
 
     public GameOfLifeColumnRow() {
@@ -64,6 +64,21 @@ public class GameOfLifeColumnRow implements Serializable {
         return new HashCodeBuilder(17, 37).append(cells).toHashCode();
     }
 
+
+    @Override
+    public GameOfLifeColumnRow clone() {
+        try {
+            GameOfLifeColumnRow clone = (GameOfLifeColumnRow) super.clone();
+            ArrayList<GameOfLifeCell> clonedCells = new ArrayList<>();
+            for (GameOfLifeCell cell : this.cells) {
+                clonedCells.add(cell.clone());
+            }
+            clone.cells = clonedCells;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Cloning failed: " + e.getMessage());
+        }
+    }
 
 }
 

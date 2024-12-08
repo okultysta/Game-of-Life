@@ -4,9 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import com.example.IntroSceneController;
 
 import java.io.IOException;
 
@@ -17,23 +15,21 @@ public class MainApplication extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("IntroScene.fxml"));
-
-        AnchorPane root = loader.load();
-
-
+        IntroSceneController controller = loader.getController();
+        AnchorPane root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-
         primaryStage.setWidth(800);
         primaryStage.setHeight(600);
-
         primaryStage.setTitle("Game Of Life Intro");
-
-
-
         primaryStage.show();
     }
 }

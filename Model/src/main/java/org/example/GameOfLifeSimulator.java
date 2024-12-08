@@ -1,5 +1,5 @@
 package org.example;
 
-public interface GameOfLifeSimulator {
+public interface GameOfLifeSimulator  {
     void doStep(GameOfLifeBoard board);
 }

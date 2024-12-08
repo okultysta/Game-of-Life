@@ -93,24 +93,22 @@ public class GameOfLifeCell implements Serializable, Comparable<GameOfLifeCell>,
 
     @Override
     public int compareTo(GameOfLifeCell o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
         if (this.alive != o.alive) {
-            return 0;
+            return Boolean.compare(this.alive, o.alive);
         }
         if (this.nextState != o.nextState) {
-            return 0;
+            return Boolean.compare(this.nextState, o.nextState);
         }
-        if (!this.listOfNeighbors.equals(o.listOfNeighbors)) {
-            return 0;
-        }
-        return 1;
+        return 0;
     }
 
     @Override
     public GameOfLifeCell clone() {
         try {
-            GameOfLifeCell clone = (GameOfLifeCell) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return clone;
+            return (GameOfLifeCell) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

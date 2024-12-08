@@ -2,7 +2,7 @@ package org.example;
 
 import java.io.Serializable;
 
-public class PlainGameOfLifeSimulator implements GameOfLifeSimulator, Serializable {
+public class PlainGameOfLifeSimulator implements GameOfLifeSimulator, Serializable, Cloneable {
 
     public PlainGameOfLifeSimulator() {
     }
@@ -22,4 +22,12 @@ public class PlainGameOfLifeSimulator implements GameOfLifeSimulator, Serializab
     }
 
 
+    @Override
+    public PlainGameOfLifeSimulator clone() {
+        try {
+            return (PlainGameOfLifeSimulator) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

@@ -1,16 +1,18 @@
 package org.example;
 
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 
-public class GameOfLifeBoard implements Serializable {
+public class GameOfLifeBoard implements Serializable, Cloneable {
     //table, which serves as game board
     private GameOfLifeCell[][] board;
     private GameOfLifeSimulator simulator;
@@ -30,40 +32,26 @@ public class GameOfLifeBoard implements Serializable {
                 board[i][j] = new GameOfLifeCell(r.nextBoolean());
             }
         }
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                for (int k = i - 1; k <= i + 1; k++) {
-                    for (int l = j - 1; l <= j + 1; l++) {
-                        if (board[i][j] != board[(k + board.length)
-                                % board.length][(l + board[0].length)
-                                % board[0].length]) {
-                            board[i][j].addNeighbor(board[(k + board.length)
-                                    % board.length][(l + board[0].length) % board[0].length]);
-                        }
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < board.length; i++) {
-            this.rows.set(i, createRow(i));
-        }
-
-        for (int i = 0; i < board[0].length; i++) {
-            this.columns.set(i, createColumn(i));
-        }
-
+        setNeighbours();
+        setColumnsAndRows();
     }
 
-    //method printing the board on screen
-    /*
-    public void print() {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                System.out.print(board[i][j].isAlive() + " ");
+    public GameOfLifeBoard(int m, int n, GameOfLifeSimulator simulator, int fillPercentage) {
+        board = new GameOfLifeCell[m][n];
+        this.columns = Arrays.asList(new GameOfLifeColumnRow[n]);
+        this.rows = Arrays.asList(new GameOfLifeColumnRow[m]);
+        Random r = new Random();
+        this.simulator = simulator;
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] = new GameOfLifeCell(r.nextInt(0, 100) <= fillPercentage);
             }
-            System.out.println();
         }
-    }*/
+        setNeighbours();
+        setColumnsAndRows();
+    }
+
 
     public GameOfLifeColumnRow createColumn(int index) {
         GameOfLifeColumnRow column = new GameOfLifeColumnRow();
@@ -136,6 +124,55 @@ public class GameOfLifeBoard implements Serializable {
                 .toString();
     }
 
+    private void setNeighbours() {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                for (int k = i - 1; k <= i + 1; k++) {
+                    for (int l = j - 1; l <= j + 1; l++) {
+                        if (board[i][j] != board[(k + board.length)
+                                % board.length][(l + board[0].length)
+                                % board[0].length]) {
+                            board[i][j].addNeighbor(board[(k + board.length)
+                                    % board.length][(l + board[0].length) % board[0].length]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void setColumnsAndRows() {
+
+        for (int i = 0; i < board.length; i++) {
+            this.rows.set(i, createRow(i));
+        }
+
+        for (int i = 0; i < board[0].length; i++) {
+            this.columns.set(i, createColumn(i));
+        }
+
+    }
+
+
+    @Override
+    public GameOfLifeBoard clone() {
+        try {
+            GameOfLifeBoard clone = (GameOfLifeBoard) super.clone();
+            clone.board = new GameOfLifeCell[board.length][board[0].length];
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board[i].length; j++) {
+                    clone.board[i][j] = new GameOfLifeCell(board[i][j].isAlive());
+                }
+            }
+            clone.columns = new ArrayList<>(this.columns);
+            clone.rows = new ArrayList<>(this.rows);
+            clone.simulator = new PlainGameOfLifeSimulator();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }
 
