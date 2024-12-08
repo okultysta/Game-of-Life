@@ -108,7 +108,10 @@ public class GameOfLifeCell implements Serializable, Comparable<GameOfLifeCell>,
     @Override
     public GameOfLifeCell clone() {
         try {
-            return (GameOfLifeCell) super.clone();
+            GameOfLifeCell clone = (GameOfLifeCell) super.clone();
+            for (GameOfLifeCell cell : this.listOfNeighbors) {
+                clone.listOfNeighbors.add(cell.clone());
+            }
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

@@ -24,7 +24,7 @@ public class IntroSceneController {
     @FXML
     private Text chooseFillAmountTitle;
     @FXML
-    private Text xabel;
+    private Text xlabel;
     @FXML
     private Text ylabel;
     @FXML
@@ -50,9 +50,10 @@ public class IntroSceneController {
     @FXML
     public void initialize() {
         title.setText("Welcome to the Game of Life!");
-        dimChoose.setText("Choose the board dimensions (both between 2 and 20):");
-        xabel.setText("X: ");
+        dimChoose.setText("Choose the board dimensions (both between 2 and 10):");
+        xlabel.setText("X: ");
         ylabel.setText("Y: ");
+        chooseFillAmountTitle.setText("Choose Fill Amount:");
         FillOption[] fillOptions = {Low, Medium, High};
         fillChoosing.getItems().addAll(fillOptions);
     }
@@ -63,8 +64,8 @@ public class IntroSceneController {
             return;
         }
         try {
-            int a = Integer.parseInt(xvalue.getText());
-            int b = Integer.parseInt(yvalue.getText());
+            Integer.parseInt(xvalue.getText());
+            Integer.parseInt(yvalue.getText());
         } catch (NumberFormatException apud) {
             showAlert("Enter a valid number!", true);
             return;
@@ -77,8 +78,8 @@ public class IntroSceneController {
             showAlert("Choose the board filling!", false);
             return;
         }
-        if (Integer.parseInt(xvalue.getText()) > 20 || Integer.parseInt(yvalue.getText()) > 20) {
-            showAlert("Dimensions must be not greater than 20", true);
+        if (Integer.parseInt(xvalue.getText()) > 10 || Integer.parseInt(yvalue.getText()) > 10) {
+            showAlert("Dimensions must be not greater than 10", true);
             return;
         }
         if (Integer.parseInt(xvalue.getText()) < 2 || Integer.parseInt(yvalue.getText()) < 2) {
@@ -86,7 +87,7 @@ public class IntroSceneController {
             return;
         }
         boardInfo.setFillPercentage(fillChoosing.getSelectionModel().getSelectedItem().getValue());
-        boardInfo.setRow(Integer.parseInt(xvalue.getText()));
+        boardInfo.setRow(Integer.parseInt(yvalue.getText()));
         boardInfo.setCol(Integer.parseInt(yvalue.getText()));
         Stage stage = (Stage) startButton.getScene().getWindow();
 
