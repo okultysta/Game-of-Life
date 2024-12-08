@@ -59,5 +59,6 @@ public class GameOfLifeColumnRowTest {
         GameOfLifeColumnRow column = new GameOfLifeColumnRow();
         GameOfLifeColumnRow column2 = column.clone();
         assertEquals(column, column2);
+        assertNotSame(column, column2);
     }
 }

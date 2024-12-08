@@ -26,6 +26,21 @@ class GameOfLifeBoardTest {
         assertNotEquals(same, 0);
     }
 
+    @Test
+    public void boadrInitializationTest2() {
+        PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
+        GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator, 20);
+        GameOfLifeBoard board2 = new GameOfLifeBoard(3, 4, simulator, 20);
+        int same = 3 * 4;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (board1.getBoard()[i][j].isAlive() == board2.getBoard()[i][j].isAlive())
+                    same--;
+            }
+        }
+        assertNotEquals(same, 0);
+    }
+
     //Test checking getter and setter
     @Test
     public void setCellTest() {
@@ -83,5 +98,6 @@ class GameOfLifeBoardTest {
         GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
         GameOfLifeBoard board2 = board.clone();
         assertEquals(board, board2);
+        assertNotSame(board, board2);
     }
 }

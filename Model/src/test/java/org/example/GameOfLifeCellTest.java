@@ -1,6 +1,7 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -119,6 +120,8 @@ public class GameOfLifeCellTest {
         GameOfLifeCell neighbourAlive = new GameOfLifeCell(true);
         GameOfLifeCell neighbourDead = new GameOfLifeCell(false);
 
+        assertThrows(NullPointerException.class, () -> cellTrue1.compareTo(null));
+
         cellTrue1.addNeighbor(neighbourAlive);
         cellTrue1.addNeighbor(neighbourAlive);
         cellTrue1.addNeighbor(neighbourAlive);
@@ -164,6 +167,7 @@ public class GameOfLifeCellTest {
         GameOfLifeCell cell = new GameOfLifeCell(true);
         GameOfLifeCell cell2 = cell.clone();
         assertEquals(cell, cell2);
+        assertNotSame(cell, cell2);
     }
 
 }
