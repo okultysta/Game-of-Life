@@ -103,6 +103,16 @@
             </dependency>
         </dependencies>
     </plugin>
+        <!-- javaFX -->
+        <!--<plugin>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-maven-plugin</artifactId>
+            <version>0.0.8</version>
+            <configuration>
+                <mainClass>org.example.MainApplication</mainClass>
+            </configuration>
+        </plugin>
+        -->
     </plugins>
 </build>
     <reporting>
@@ -153,15 +163,7 @@
                 <version>3.25.0</version>
 
             </plugin>
-            <!-- javaFX -->
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <configuration>
-                    <mainClass>org.example.MainApplication</mainClass>
-                </configuration>
-            </plugin>
+
 
         </plugins>
     </reporting>

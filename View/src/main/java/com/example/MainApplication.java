@@ -18,7 +18,6 @@ public class MainApplication extends Application {
     public void start(Stage primaryStage) {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("IntroScene.fxml"));
-        IntroSceneController controller = loader.getController();
         AnchorPane root = null;
         try {
             root = loader.load();
