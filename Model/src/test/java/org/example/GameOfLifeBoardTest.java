@@ -76,4 +76,12 @@ class GameOfLifeBoardTest {
         assertTrue(board.toString().contains(board.getColumn(1).toString()));
         assertTrue(board.toString().contains(board.getRow(1).toString()));
     }
+
+    @Test
+    public void cloneTest() {
+        PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
+        GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
+        GameOfLifeBoard board2 = board.clone();
+        assertEquals(board, board2);
+    }
 }

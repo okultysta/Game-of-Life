@@ -53,4 +53,11 @@ public class GameOfLifeColumnRowTest {
         assertTrue(column.toString().contains(cell1.toString()));
         assertTrue(column.toString().contains(cell2.toString()));
     }
+
+    @Test
+    public void cloneTest() {
+        GameOfLifeColumnRow column = new GameOfLifeColumnRow();
+        GameOfLifeColumnRow column2 = column.clone();
+        assertEquals(column, column2);
+    }
 }

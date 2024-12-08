@@ -1,7 +1,5 @@
 package com.example;
 
-
-
 public enum FillOption {
     Low("Low", 10), //10
     Medium("Medium", 30),  //30
@@ -17,7 +15,7 @@ public enum FillOption {
     }
 
     public String toString() {
-        return this.label + " (" + this.value + "%)";
+        return this.label + "(" + this.value + "%)";
     }
 
     public int getValue() {

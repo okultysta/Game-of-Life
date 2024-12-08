@@ -109,4 +109,61 @@ public class GameOfLifeCellTest {
         assertTrue(cell.toString().contains(String.valueOf(cell.nextState())));
     }
 
+    @Test
+    public void comparableTest() {
+        GameOfLifeCell cellTrue1 = new GameOfLifeCell(true);
+        GameOfLifeCell cellTrue2 = new GameOfLifeCell(true);
+        GameOfLifeCell cellFalse1 = new GameOfLifeCell(false);
+        GameOfLifeCell cellFalse2 = new GameOfLifeCell(false);
+
+        GameOfLifeCell neighbourAlive = new GameOfLifeCell(true);
+        GameOfLifeCell neighbourDead = new GameOfLifeCell(false);
+
+        cellTrue1.addNeighbor(neighbourAlive);
+        cellTrue1.addNeighbor(neighbourAlive);
+        cellTrue1.addNeighbor(neighbourAlive);
+        assertTrue(cellTrue1.nextState());
+
+        cellTrue2.addNeighbor(neighbourDead);
+        assertFalse(cellTrue2.nextState());
+
+        cellFalse1.addNeighbor(neighbourAlive);
+        cellFalse1.addNeighbor(neighbourAlive);
+        cellFalse1.addNeighbor(neighbourAlive);
+        assertTrue(cellFalse1.nextState());
+
+        cellFalse2.addNeighbor(neighbourDead);
+        assertFalse(cellFalse2.nextState());
+
+
+        assertEquals(1, cellTrue1.compareTo(cellFalse1));
+        assertEquals(-1, cellFalse1.compareTo(cellTrue1));
+
+        assertEquals(1, cellTrue1.compareTo(cellTrue2));
+        assertEquals(-1, cellTrue2.compareTo(cellTrue1));
+
+        assertEquals(1, cellFalse1.compareTo(cellFalse2));
+        assertEquals(-1, cellFalse2.compareTo(cellFalse1));
+
+        cellTrue2.addNeighbor(neighbourAlive);
+        cellTrue2.addNeighbor(neighbourAlive);
+        assertTrue(cellTrue2.nextState());
+
+        assertEquals(0, cellTrue2.compareTo(cellTrue1));
+
+        cellFalse2.addNeighbor(neighbourAlive);
+        cellFalse2.addNeighbor(neighbourAlive);
+        cellFalse2.addNeighbor(neighbourAlive);
+        assertTrue(cellFalse2.nextState());
+
+        assertEquals(0, cellFalse2.compareTo(cellFalse1));
+    }
+
+    @Test
+    public void cloneTest() {
+        GameOfLifeCell cell = new GameOfLifeCell(true);
+        GameOfLifeCell cell2 = cell.clone();
+        assertEquals(cell, cell2);
+    }
+
 }
