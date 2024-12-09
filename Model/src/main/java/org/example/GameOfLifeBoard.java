@@ -164,8 +164,10 @@ public class GameOfLifeBoard implements Serializable, Cloneable {
                     clone.board[i][j] = new GameOfLifeCell(board[i][j].isAlive());
                 }
             }
-            clone.columns = new ArrayList<>(this.columns);
-            clone.rows = new ArrayList<>(this.rows);
+            clone.setNeighbours();
+            clone.columns = new ArrayList<>();
+            clone.rows = new ArrayList<>();
+            clone.setColumnsAndRows();
             clone.simulator = new PlainGameOfLifeSimulator();
             return clone;
         } catch (CloneNotSupportedException e) {
