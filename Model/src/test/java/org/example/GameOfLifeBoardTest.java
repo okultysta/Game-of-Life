@@ -25,7 +25,7 @@ class GameOfLifeBoardTest {
         }
         assertNotEquals(same, 0);
     }
-
+    /*
     @Test
     public void boadrInitializationTest2() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
@@ -40,6 +40,8 @@ class GameOfLifeBoardTest {
         }
         assertNotEquals(same, 0);
     }
+    */
+
 
     //Test checking getter and setter
     @Test

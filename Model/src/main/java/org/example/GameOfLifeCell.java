@@ -112,9 +112,10 @@ public class GameOfLifeCell implements Serializable, Comparable<GameOfLifeCell>,
             for (GameOfLifeCell cell : this.listOfNeighbors) {
                 clone.listOfNeighbors.add(cell.clone());
             }
+            return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
-        return null;
+
     }
 }
