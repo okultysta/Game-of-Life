@@ -171,8 +171,7 @@ public class GameOfLifeBoard implements Serializable, Cloneable {
             clone.simulator = new PlainGameOfLifeSimulator();
             return clone;
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+            throw new AssertionError("Cloning failed: " + e.getMessage());
         }
     }
 

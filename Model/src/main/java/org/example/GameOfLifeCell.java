@@ -116,6 +116,5 @@ public class GameOfLifeCell implements Serializable, Comparable<GameOfLifeCell>,
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
-
     }
 }

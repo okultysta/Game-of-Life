@@ -158,7 +158,6 @@ public class GameOfLifeCellTest {
         cellFalse2.addNeighbor(neighbourAlive);
         cellFalse2.addNeighbor(neighbourAlive);
         assertTrue(cellFalse2.nextState());
-
         assertEquals(0, cellFalse2.compareTo(cellFalse1));
     }
 
