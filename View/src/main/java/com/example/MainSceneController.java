@@ -1,5 +1,7 @@
 package com.example;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.*;
 import javafx.beans.property.adapter.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,16 +13,19 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.StringConverter;
 import org.example.*;
-import javafx.beans.property.SimpleStringProperty;
 
 import java.io.IOException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import static java.awt.Color.GREEN;
+import static java.awt.Color.RED;
 
 
 public class MainSceneController {
@@ -92,7 +97,7 @@ public class MainSceneController {
         gameOfLifeBoardFactory = new GameOfLifeBoardFactory(gameOfLifeBoard);
         JavaBeanBooleanPropertyBuilder propertyBuilder = JavaBeanBooleanPropertyBuilder.create();
         JavaBeanObjectPropertyBuilder colorPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
-        JavaBeanStringPropertyBuilder colorBuilder = JavaBeanStringPropertyBuilder.create();
+
         String[][] bridge = new String[x][y];
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
@@ -108,13 +113,16 @@ public class MainSceneController {
                 mainBoard.add(cell, i, j);
                 try {
 
-                    JavaBeanObjectProperty colorProperty = colorPropertyBuilder.bean(cell).name("fill").build();
-                    SimpleStringProperty colorStringProperty = new SimpleStringProperty(bridge[i][j]);
+                    //JavaBeanObjectProperty colorProperty = colorPropertyBuilder.bean(cell).name("fill").build();
+                    //SimpleStringProperty colorStringProperty = new SimpleStringProperty(bridge[i][j]);
                     JavaBeanBooleanProperty aliveProperty = propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
                             .getter("isAlive").setter("setCell").build();
-                    //colorStringProperty.bindBidirectional(aliveProperty, new CustomBooleanStringConverter());
-                    //colorStringProperty.bindBidirectional(cell.fillProperty(), new CustomStringColorConverter());
-                    //aliveProperty.bindBidirectional()
+                    //JavaBeanBooleanProperty aliveHelperProperty = propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
+                           // .getter("isAlive").setter("setCell").build();
+                    StringProperty aliveStringProperty = new SimpleStringProperty();
+                    aliveProperty.bind(Bindings.when(cell.fillProperty().isEqualTo(Color.GREEN))
+                            .then(true)
+                            .otherwise(false));
                     aliveProperty.addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
                             cell.setFill(Color.GREEN);
@@ -122,6 +130,28 @@ public class MainSceneController {
                             cell.setFill(Color.RED);
                         }
                     });
+
+
+                    //Bindings.bindBidirectional(aliveStringProperty, aliveProperty, booleanToStringConverter);
+                    //Bindings.bindBidirectional(aliveStringProperty, cell.fillProperty(), paintToStringConverter);
+                    //colorStringProperty.bindBidirectional(aliveProperty, new CustomBooleanStringConverter());
+                    //colorStringProperty.bindBidirectional(cell.fillProperty(), new CustomStringColorConverter());
+                    //BooleanProperty aliveTempProperty = new SimpleBooleanProperty();
+                    //ObjectProperty<Paint> fillAdapter = new SimpleObjectProperty<>();
+
+                    //fillAdapter.bindBidirectional(cell.fillProperty());
+
+                    //aliveProperty.bindBidirectional((Property<Boolean>) fillAdapter.isEqualTo(Color.GREEN));
+                    /*
+                    aliveProperty.addListener((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            cell.setFill(Color.GREEN);
+                        } else {
+                            cell.setFill(Color.RED);
+                        }
+                    });
+
+
 
                     int finalI = i;
                     int finalJ = j;
@@ -132,6 +162,8 @@ public class MainSceneController {
                             gameOfLifeBoard.getBoard()[finalI][finalJ].setCell(false);
                         }
                     });
+
+                    */
 
 
                 }
