@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -12,13 +13,23 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.util.StringConverter;
 import org.example.*;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+
 
 public class MainSceneController {
+    @FXML
+    private Button langConfirm;
+    @FXML
+    private ChoiceBox<Language> langChooseMain;
+    @FXML
+    private Text langChooseTitle;
     @FXML
     private Button doStep;
     @FXML
@@ -31,13 +42,24 @@ public class MainSceneController {
     private Text boardTitle;
     private GameOfLifeBoard gameOfLifeBoard;
     private GameOfLifeBoardDaoFactory factory;
+    private GameOfLifeBoardFactory gameOfLifeBoardFactory;
 
 
     public MainSceneController() {}
 
 
     public void initialize() {
-        boardTitle.setText("Game Of Life");
+        try {
+            //Locale enLanguage = new Locale("en");
+           // ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", enLanguage);
+            //updateUI(bundle);
+
+        }
+        catch (MissingResourceException e) {
+            System.out.println("dupa ni ma zasobu");
+        }
+        Language[] languages = Language.values();
+        langChooseMain.getItems().addAll(languages);
         factory = new GameOfLifeBoardDaoFactory();
     }
 
@@ -67,9 +89,11 @@ public class MainSceneController {
         mainBoard.getChildren().clear();
         gameOfLifeBoard = new GameOfLifeBoard(x, y, new PlainGameOfLifeSimulator(),
                 boardInformation.getFillPercentage());
+        gameOfLifeBoardFactory = new GameOfLifeBoardFactory(gameOfLifeBoard);
         JavaBeanBooleanPropertyBuilder propertyBuilder = JavaBeanBooleanPropertyBuilder.create();
-        JavaBeanObjectPropertyBuilder<Color> colorPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
+        JavaBeanObjectPropertyBuilder colorPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
         JavaBeanStringPropertyBuilder colorBuilder = JavaBeanStringPropertyBuilder.create();
+        String[][] bridge = new String[x][y];
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
                 Rectangle cell = new Rectangle(25, 25);
@@ -83,22 +107,32 @@ public class MainSceneController {
                 }
                 mainBoard.add(cell, i, j);
                 try {
+
+                    JavaBeanObjectProperty colorProperty = colorPropertyBuilder.bean(cell).name("fill").build();
+                    SimpleStringProperty colorStringProperty = new SimpleStringProperty(bridge[i][j]);
                     JavaBeanBooleanProperty aliveProperty = propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
                             .getter("isAlive").setter("setCell").build();
-                     JavaBeanObjectProperty colorProperty = colorPropertyBuilder.bean(cell).name("fill").build();
-                    String bridge = "";
-                    SimpleStringProperty colorStringProperty = new SimpleStringProperty(bridge);
-
-                    colorStringProperty.bindBidirectional(aliveProperty, new CustomBooleanStringConverter());
-                    colorStringProperty.bindBidirectional(cell.fillProperty(), new CustomStringColorConverter());
-                    /*aliveProperty.addListener((observable, oldValue, newValue) -> {
+                    //colorStringProperty.bindBidirectional(aliveProperty, new CustomBooleanStringConverter());
+                    //colorStringProperty.bindBidirectional(cell.fillProperty(), new CustomStringColorConverter());
+                    //aliveProperty.bindBidirectional()
+                    aliveProperty.addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
                             cell.setFill(Color.GREEN);
                         } else {
                             cell.setFill(Color.RED);
                         }
                     });
-                    */
+
+                    int finalI = i;
+                    int finalJ = j;
+                    cell.fillProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue.equals(Color.GREEN)) {
+                            gameOfLifeBoard.getBoard()[finalI][finalJ].setCell(true);
+                        } else if (newValue.equals(Color.RED)) {
+                            gameOfLifeBoard.getBoard()[finalI][finalJ].setCell(false);
+                        }
+                    });
+
 
                 }
                 catch (NoSuchMethodException e) {
@@ -109,18 +143,7 @@ public class MainSceneController {
 
 
 
-                /* Listener: aktualizacja aliveProperty na podstawie zmiany koloru prostokąta
-                int finalI = i;
-                int finalJ = j;
-                cell.fillProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue.equals(Color.GREEN)) {
-                        gameOfLifeBoard.getBoard()[finalI][finalJ].setCell(true);
-                    } else if (newValue.equals(Color.RED)) {
-                        gameOfLifeBoard.getBoard()[finalI][finalJ].setCell(false);
-                    }
-                });
-                *
-                 */
+
 
             }
         }
@@ -128,6 +151,7 @@ public class MainSceneController {
 
     public void nextStep(ActionEvent actionEvent) {
         gameOfLifeBoard.doSimulationStep();
+        updateBoard();
     }
 
     public void cellClicked(MouseEvent mouseEvent) {
@@ -153,6 +177,8 @@ public class MainSceneController {
         try {
             FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
             saver.write(gameOfLifeBoard);
+            FileGameOfLifeBoardDao saver2 = factory.getFileDao("OriginalFile.ser");
+            saver2.write(gameOfLifeBoardFactory.createInstance());
 
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -166,7 +192,7 @@ public class MainSceneController {
         public void readFromFile(ActionEvent actionEvent) {
             try {
                 FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
-                gameOfLifeBoard=saver.read();
+                gameOfLifeBoard = saver.read();
 
             } catch (IOException e) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -175,20 +201,55 @@ public class MainSceneController {
                 alert.setContentText("No such file!");
                 alert.showAndWait();
             }
-            for(int i = 0;i < gameOfLifeBoard.getBoard().length;i++) {
-                for(int j = 0;j < gameOfLifeBoard.getBoard()[i].length;j++) {
-                    if(gameOfLifeBoard.getBoard()[i][j].isAlive()) {
-                        Rectangle temp = (Rectangle)mainBoard.getChildren().get(i+j);
-                        temp.setFill(Color.GREEN);
-                    }
-                    else {
-                        Rectangle temp = (Rectangle)mainBoard.getChildren().get(i+j);
-                        temp.setFill(Color.RED);
-                    }
-                }
-            }
+            updateBoard();
 
         }
 
+    public void confirmLang(ActionEvent actionEvent) {
+        switch (langChooseMain.getSelectionModel().getSelectedItem()) {
+            case ENGLISH -> {
+                Locale enLang = new Locale("en");
+                ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", enLang);
+                Locale.setDefault(enLang);
+                updateUI(bundle);
+                break;
+            }
+            case POLISH -> {
+                Locale plLang = new Locale("pl");
+                ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", plLang);
+                Locale.setDefault(plLang);
+                updateUI(bundle);
+                break;
+            }
+
+        }
+    }
+
+
+    private void updateUI (ResourceBundle bundle) {
+            boardTitle.setText(bundle.getString("boardTitle"));
+            langChooseTitle.setText(bundle.getString("langChooseTitle"));
+            saveFile.setText(bundle.getString("saveFile"));
+            readFile.setText(bundle.getString("readFile"));
+            doStep.setText(bundle.getString("doStep"));
+        }
+
+        private void updateBoard() {
+        int counter =0;
+        for(int i=0;i<gameOfLifeBoard.getBoard().length;i++) {
+            for(int j=0;j<gameOfLifeBoard.getBoard()[0].length;j++) {
+                Rectangle rectangle = (Rectangle)mainBoard.getChildren().get(counter++);
+                if(gameOfLifeBoard.getBoard()[i][j].isAlive()) {
+                    rectangle.setFill(Color.GREEN);
+                }
+                else {
+                    rectangle.setFill(Color.RED);
+                }
+            }
+        }
+    }
 }
+
+
+
 
