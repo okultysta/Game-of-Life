@@ -39,6 +39,10 @@ class GameOfLifeBoardTest {
             }
         }
         assertNotEquals(same, 0);
+        board1.doSimulationStep();
+       
+        assertNotEquals(board1, board2);
+
     }
     */
 
