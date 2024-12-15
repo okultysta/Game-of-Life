@@ -1,4 +1,5 @@
 package org.example;
+
 import java.util.ListResourceBundle;
 
 public class Resources extends ListResourceBundle {
