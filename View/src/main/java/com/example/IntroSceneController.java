@@ -13,14 +13,23 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import static com.example.FillOption.High;
 import static com.example.FillOption.Low;
 import static com.example.FillOption.Medium;
+import static com.example.Language.ENGLISH;
 
 
 public class IntroSceneController {
-
+    @FXML
+    private Button langConfirmIntro;
+    @FXML
+    private Text langChangeTitleIntro;
+    @FXML
+    private ChoiceBox<Language> langChooseIntro;
     @FXML
     private Text chooseFillAmountTitle;
     @FXML
@@ -42,6 +51,7 @@ public class IntroSceneController {
     private BoardInformation boardInfo;
 
 
+
     public IntroSceneController() {
         System.out.println("IntroSceneController");
         boardInfo = new BoardInformation();
@@ -49,13 +59,22 @@ public class IntroSceneController {
 
     @FXML
     public void initialize() {
-        title.setText("Welcome to the Game of Life!");
-        dimChoose.setText("Choose the board dimensions (both between 2 and 10):");
         xlabel.setText("X: ");
         ylabel.setText("Y: ");
-        chooseFillAmountTitle.setText("Choose Fill Amount:");
+        langConfirmIntro.setText("OK");
         FillOption[] fillOptions = {Low, Medium, High};
         fillChoosing.getItems().addAll(fillOptions);
+        Language[] languages = Language.values();
+        langChooseIntro.getItems().addAll(languages);
+        try {
+            Locale enLanguage = new Locale.Builder().setLanguage("en").build();
+            ResourceBundle bundle = ResourceBundle.getBundle("i18n/introLangData", enLanguage);
+            updateUI(bundle);
+
+        }
+        catch (MissingResourceException e) {
+            System.out.println("dupa ni ma zasobu");
+        }
     }
 
     public void startSimulation(ActionEvent actionEvent) throws IOException {
@@ -118,5 +137,35 @@ public class IntroSceneController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public void changeLangIntro(ActionEvent actionEvent) {
+        switch(langChooseIntro.getSelectionModel().getSelectedItem()) {
+            case ENGLISH -> {
+                Locale enLang = new Locale.Builder().setLanguage("en").build();
+                ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", enLang);
+                Locale.setDefault(enLang);
+                updateUI(bundle);
+                break;
+            }
+            case POLISH -> {
+                Locale plLang = new Locale.Builder().setLanguage("pl").build();
+                ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", plLang);
+                Locale.setDefault(plLang);
+                updateUI(bundle);
+                break;
+            }
+            default -> {
+                showAlert("Choose the language!", false);
+            }
+        }
+    }
+    private void updateUI(ResourceBundle bundle) {
+        title.setText(bundle.getString("title"));
+        dimChoose.setText(bundle.getString("dimChoose"));
+        chooseFillAmountTitle.setText(bundle.getString("chooseFillAmountTitle"));
+        xlabel.setText("X:");
+        ylabel.setText("Y:");
+        langChangeTitleIntro.setText(bundle.getString("langChangeTitleIntro"));
     }
 }

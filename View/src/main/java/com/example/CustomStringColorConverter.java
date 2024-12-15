@@ -12,12 +12,26 @@ public class CustomStringColorConverter extends StringConverter<Paint> {
 
     @Override
     public String toString(Paint color) {
-        return color.toString();
+        if(color == Color.GREEN){
+            return "Green";
+        }
+        else if(color == Color.RED){
+            return "Red";
+        }
+        return "Unknown";
     }
 
     @Override
     public Paint fromString(String s) {
-        return Color.web(s);
+        if(s.equals("Green")){
+            return Color.GREEN;
+        }
+        else if(s.equals("Red")){
+            return Color.RED;
+        }
+        else {
+            return Color.WHITE;
+        }
     }
         /*
     public Color toColor(boolean state) {
