@@ -5,6 +5,9 @@ import javafx.beans.property.*;
 import javafx.beans.property.adapter.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -16,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.example.*;
 
@@ -35,6 +39,8 @@ public class MainSceneController {
     private ChoiceBox<Language> langChooseMain;
     @FXML
     private Text langChooseTitle;
+    @FXML
+    private Button backToStart;
     @FXML
     private Button doStep;
     @FXML
@@ -279,6 +285,16 @@ public class MainSceneController {
                 }
             }
         }
+    }
+
+    public void goBackToStart(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("IntroScene.fxml"));
+        Parent mainRoot = loader.load();
+
+        Stage stage = (Stage) backToStart.getScene().getWindow();
+
+        stage.setScene(new Scene(mainRoot));
+        stage.show();
     }
 }
 
