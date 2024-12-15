@@ -50,17 +50,17 @@ public class MainSceneController {
     private GameOfLifeBoardFactory gameOfLifeBoardFactory;
 
 
-    public MainSceneController() {}
+    public MainSceneController() {
+    }
 
 
     public void initialize() {
         try {
-            //Locale enLanguage = new Locale("en");
-           // ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", enLanguage);
-            //updateUI(bundle);
+            Locale enLanguage = new Locale("en");
+             ResourceBundle bundle = ResourceBundle.getBundle("langData", enLanguage);
+            updateUI(bundle);
 
-        }
-        catch (MissingResourceException e) {
+        } catch (MissingResourceException e) {
             System.out.println("dupa ni ma zasobu");
         }
         Language[] languages = Language.values();
@@ -71,7 +71,7 @@ public class MainSceneController {
     public void initializeBoard(BoardInformation boardInformation) {
         int x = boardInformation.getRow();
         int y = boardInformation.getCol();
-        if(mainBoard == null) {
+        if (mainBoard == null) {
             mainBoard = new GridPane();
         }
         mainBoard.setPrefWidth(25 * x);
@@ -118,7 +118,7 @@ public class MainSceneController {
                     JavaBeanBooleanProperty aliveProperty = propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
                             .getter("isAlive").setter("setCell").build();
                     //JavaBeanBooleanProperty aliveHelperProperty = propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
-                           // .getter("isAlive").setter("setCell").build();
+                    // .getter("isAlive").setter("setCell").build();
                     StringProperty aliveStringProperty = new SimpleStringProperty();
                     aliveProperty.bind(Bindings.when(cell.fillProperty().isEqualTo(Color.GREEN))
                             .then(true)
@@ -130,8 +130,6 @@ public class MainSceneController {
                             cell.setFill(Color.RED);
                         }
                     });
-
-
                     //Bindings.bindBidirectional(aliveStringProperty, aliveProperty, booleanToStringConverter);
                     //Bindings.bindBidirectional(aliveStringProperty, cell.fillProperty(), paintToStringConverter);
                     //colorStringProperty.bindBidirectional(aliveProperty, new CustomBooleanStringConverter());
@@ -142,7 +140,7 @@ public class MainSceneController {
                     //fillAdapter.bindBidirectional(cell.fillProperty());
 
                     //aliveProperty.bindBidirectional((Property<Boolean>) fillAdapter.isEqualTo(Color.GREEN));
-                    /*
+
                     aliveProperty.addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
                             cell.setFill(Color.GREEN);
@@ -150,31 +148,10 @@ public class MainSceneController {
                             cell.setFill(Color.RED);
                         }
                     });
-
-
-
-                    int finalI = i;
-                    int finalJ = j;
-                    cell.fillProperty().addListener((observable, oldValue, newValue) -> {
-                        if (newValue.equals(Color.GREEN)) {
-                            gameOfLifeBoard.getBoard()[finalI][finalJ].setCell(true);
-                        } else if (newValue.equals(Color.RED)) {
-                            gameOfLifeBoard.getBoard()[finalI][finalJ].setCell(false);
-                        }
-                    });
-
-                    */
-
-
-                }
-                catch (NoSuchMethodException e) {
+                    
+                } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
-
-
-
-
-
 
 
             }
@@ -200,7 +177,6 @@ public class MainSceneController {
     }
 
 
-
     public GridPane getMainBoard() {
         return mainBoard;
     }
@@ -221,60 +197,62 @@ public class MainSceneController {
         }
     }
 
-        public void readFromFile(ActionEvent actionEvent) {
-            try {
-                FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
-                gameOfLifeBoard = saver.read();
+    public void readFromFile(ActionEvent actionEvent) {
+        try {
+            FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
+            gameOfLifeBoard = saver.read();
 
-            } catch (IOException e) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error!");
-                alert.setHeaderText(null);
-                alert.setContentText("No such file!");
-                alert.showAndWait();
-            }
-            updateBoard();
-
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error!");
+            alert.setHeaderText(null);
+            alert.setContentText("No such file!");
+            alert.showAndWait();
         }
+        updateBoard();
+
+    }
 
     public void confirmLang(ActionEvent actionEvent) {
+        Locale selectedLocale;
+        ResourceBundle bundle;
+
         switch (langChooseMain.getSelectionModel().getSelectedItem()) {
             case ENGLISH -> {
-                Locale enLang = new Locale("en");
-                ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", enLang);
-                Locale.setDefault(enLang);
-                updateUI(bundle);
-                break;
+                selectedLocale = new Locale("en");
+                bundle = ResourceBundle.getBundle("langData", selectedLocale);
             }
             case POLISH -> {
-                Locale plLang = new Locale("pl");
-                ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", plLang);
-                Locale.setDefault(plLang);
-                updateUI(bundle);
-                break;
+                selectedLocale = new Locale("pl");
+                bundle = ResourceBundle.getBundle("langData", selectedLocale);
             }
-
+            default -> {
+                selectedLocale = Locale.getDefault();
+                bundle = ResourceBundle.getBundle("langData", selectedLocale);
+            }
         }
+
+        Locale.setDefault(selectedLocale);
+        updateUI(bundle);
     }
 
 
-    private void updateUI (ResourceBundle bundle) {
-            boardTitle.setText(bundle.getString("boardTitle"));
-            langChooseTitle.setText(bundle.getString("langChooseTitle"));
-            saveFile.setText(bundle.getString("saveFile"));
-            readFile.setText(bundle.getString("readFile"));
-            doStep.setText(bundle.getString("doStep"));
-        }
+    private void updateUI(ResourceBundle bundle) {
+        boardTitle.setText(bundle.getString("boardTitle"));
+        langChooseTitle.setText(bundle.getString("langChooseTitle"));
+        saveFile.setText(bundle.getString("saveFile"));
+        readFile.setText(bundle.getString("readFile"));
+        doStep.setText(bundle.getString("doStep"));
+    }
 
-        private void updateBoard() {
-        int counter =0;
-        for(int i=0;i<gameOfLifeBoard.getBoard().length;i++) {
-            for(int j=0;j<gameOfLifeBoard.getBoard()[0].length;j++) {
-                Rectangle rectangle = (Rectangle)mainBoard.getChildren().get(counter++);
-                if(gameOfLifeBoard.getBoard()[i][j].isAlive()) {
+    private void updateBoard() {
+        int counter = 0;
+        for (int i = 0; i < gameOfLifeBoard.getBoard().length; i++) {
+            for (int j = 0; j < gameOfLifeBoard.getBoard()[0].length; j++) {
+                Rectangle rectangle = (Rectangle) mainBoard.getChildren().get(counter++);
+                if (gameOfLifeBoard.getBoard()[i][j].isAlive()) {
                     rectangle.setFill(Color.GREEN);
-                }
-                else {
+                } else {
                     rectangle.setFill(Color.RED);
                 }
             }
