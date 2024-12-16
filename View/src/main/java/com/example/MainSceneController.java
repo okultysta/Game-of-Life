@@ -49,6 +49,7 @@ public class MainSceneController {
     private GameOfLifeBoard gameOfLifeBoard;
     private GameOfLifeBoardDaoFactory factory;
     private TreeMap<String, String> errorMessages;
+    private BoardPrototype originalBorad;
 
 
     public MainSceneController() {
@@ -99,6 +100,7 @@ public class MainSceneController {
         mainBoard.getChildren().clear();
         gameOfLifeBoard = new GameOfLifeBoard(x, y, new PlainGameOfLifeSimulator(),
                 boardInformation.getFillPercentage());
+        this.originalBorad = new BoardPrototype(gameOfLifeBoard);
         //gameOfLifeBoardFactory = new GameOfLifeBoardFactory(gameOfLifeBoard);
         //JavaBeanObjectPropertyBuilder colorPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
         setCellsAndBindings(x, y);

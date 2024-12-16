@@ -112,7 +112,7 @@ public class IntroSceneController {
         }
         boardInfo.setFillPercentage(fillChoosing.getSelectionModel().getSelectedItem().getValue());
         boardInfo.setRow(Integer.parseInt(yvalue.getText()));
-        boardInfo.setCol(Integer.parseInt(yvalue.getText()));
+        boardInfo.setCol(Integer.parseInt(xvalue.getText()));
         Stage stage = (Stage) startButton.getScene().getWindow();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScene.fxml"));
