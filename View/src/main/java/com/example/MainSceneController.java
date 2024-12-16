@@ -100,9 +100,143 @@ public class MainSceneController {
         gameOfLifeBoard = new GameOfLifeBoard(x, y, new PlainGameOfLifeSimulator(),
                 boardInformation.getFillPercentage());
         //gameOfLifeBoardFactory = new GameOfLifeBoardFactory(gameOfLifeBoard);
-        JavaBeanBooleanPropertyBuilder propertyBuilder = JavaBeanBooleanPropertyBuilder.create();
         //JavaBeanObjectPropertyBuilder colorPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
+        setCellsAndBindings(x, y);
+    }
 
+    public void nextStep(ActionEvent actionEvent) {
+        gameOfLifeBoard.doSimulationStep();
+        updateBoard();
+    }
+
+    public void cellClicked(MouseEvent mouseEvent) {
+        Rectangle clicked = (Rectangle) mouseEvent.getSource();
+        if (clicked.getFill() == Color.GREEN) {
+            clicked.setFill(Color.RED);
+        } else {
+            clicked.setFill(Color.GREEN);
+        }
+    }
+
+
+    public void saveToFile(ActionEvent actionEvent) {
+        try {
+            FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
+            saver.write(gameOfLifeBoard);
+            //FileGameOfLifeBoardDao saver2 = factory.getFileDao("OriginalFile.ser");
+
+
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(errorMessages.get("error"));
+            alert.setHeaderText(null);
+            alert.setContentText(errorMessages.get("noFile"));
+            alert.showAndWait();
+        }
+    }
+
+    public void readFromFile(ActionEvent actionEvent) {
+        try {
+            FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
+            gameOfLifeBoard = saver.read();
+            setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
+
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(errorMessages.get("error"));
+            alert.setHeaderText(null);
+            alert.setContentText(errorMessages.get("noFile"));
+            alert.showAndWait();
+        }
+        updateBoard();
+
+    }
+
+    public void confirmLang(ActionEvent actionEvent) {
+        Locale selectedLocale;
+        if (langChooseMain.getSelectionModel().getSelectedItem() == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(errorMessages.get("error"));
+            alert.setHeaderText(null);
+            alert.setContentText(errorMessages.get("noLanguage"));
+            alert.showAndWait();
+        }
+
+        switch (langChooseMain.getSelectionModel().getSelectedItem()) {
+            case ENGLISH -> {
+                selectedLocale = new Locale.Builder().setLanguage("en").build();
+            }
+            case POLISH -> {
+                selectedLocale = new Locale.Builder().setLanguage("pl").build();
+            }
+            default -> {
+                selectedLocale = Locale.getDefault();
+
+            }
+        }
+
+        Locale.setDefault(selectedLocale);
+        reloadFxml(selectedLocale);
+    }
+
+
+    private void updateUI(ResourceBundle bundle) {
+        boardTitle.setText(bundle.getString("boardTitle"));
+        langChooseTitle.setText(bundle.getString("langChooseTitle"));
+        saveFile.setText(bundle.getString("saveFile"));
+        readFile.setText(bundle.getString("readFile"));
+        doStep.setText(bundle.getString("doStep"));
+        backToStart.setText(bundle.getString("goBackToStart"));
+        langConfirm.setText("OK");
+        errorMessages.put("error", "");
+        errorMessages.put("noLanguage", "");
+        errorMessages.put("noFile", "");
+
+    }
+
+    private void updateBoard() {
+        int counter = 0;
+        for (int i = 0; i < gameOfLifeBoard.getBoard().length; i++) {
+            for (int j = 0; j < gameOfLifeBoard.getBoard()[0].length; j++) {
+                Rectangle rectangle = (Rectangle) mainBoard.getChildren().get(counter++);
+                if (gameOfLifeBoard.getBoard()[i][j].isAlive()) {
+                    rectangle.setFill(Color.GREEN);
+                } else {
+                    rectangle.setFill(Color.RED);
+                }
+            }
+        }
+    }
+
+    public void goBackToStart(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("IntroScene.fxml"));
+        Parent mainRoot = loader.load();
+
+        Stage stage = (Stage) backToStart.getScene().getWindow();
+
+        stage.setScene(new Scene(mainRoot));
+        stage.show();
+    }
+
+    private void reloadFxml(Locale locale) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass()
+                    .getResource("introScene.fxml"));
+            ResourceBundle bundle = ResourceBundle
+                    .getBundle("com.example.langData", locale);
+            loader.setResources(bundle);
+            Parent root = loader.load();
+            Stage stage = (Stage) langChooseMain.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            updateUI(bundle);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setCellsAndBindings(int x, int y) {
+        JavaBeanBooleanPropertyBuilder propertyBuilder = JavaBeanBooleanPropertyBuilder.create();
+        mainBoard.getChildren().clear();
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
                 Rectangle cell = new Rectangle(25, 25);
@@ -164,130 +298,7 @@ public class MainSceneController {
         }
     }
 
-    public void nextStep(ActionEvent actionEvent) {
-        gameOfLifeBoard.doSimulationStep();
-        updateBoard();
-    }
 
-    public void cellClicked(MouseEvent mouseEvent) {
-        Rectangle clicked = (Rectangle) mouseEvent.getSource();
-        if (clicked.getFill() == Color.GREEN) {
-            clicked.setFill(Color.RED);
-        } else {
-            clicked.setFill(Color.GREEN);
-        }
-    }
-
-
-    public void saveToFile(ActionEvent actionEvent) {
-        try {
-            FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
-            saver.write(gameOfLifeBoard);
-            //FileGameOfLifeBoardDao saver2 = factory.getFileDao("OriginalFile.ser");
-
-
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error!");
-            alert.setHeaderText(null);
-            alert.setContentText(errorMessages.get("noFile"));
-            alert.showAndWait();
-        }
-    }
-
-    public void readFromFile(ActionEvent actionEvent) {
-        try {
-            FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
-            gameOfLifeBoard = saver.read();
-
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(errorMessages.get("error"));
-            alert.setHeaderText(null);
-            alert.setContentText(errorMessages.get("noFile"));
-            alert.showAndWait();
-        }
-        updateBoard();
-
-    }
-
-    public void confirmLang(ActionEvent actionEvent) {
-        Locale selectedLocale;
-        if (langChooseMain.getSelectionModel().getSelectedItem() == null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(errorMessages.get("error"));
-            alert.setHeaderText(null);
-            alert.setContentText(errorMessages.get("noLanguage"));
-            alert.showAndWait();
-        }
-
-        switch (langChooseMain.getSelectionModel().getSelectedItem()) {
-            case ENGLISH -> {
-                selectedLocale = new Locale.Builder().setLanguage("en").build();
-            }
-            case POLISH -> {
-                selectedLocale = new Locale.Builder().setLanguage("pl").build();
-            }
-            default -> {
-                selectedLocale = Locale.getDefault();
-
-            }
-        }
-
-        Locale.setDefault(selectedLocale);
-        reloadFxml(selectedLocale);
-    }
-
-
-    private void updateUI(ResourceBundle bundle) {
-        boardTitle.setText(bundle.getString("boardTitle"));
-        langChooseTitle.setText(bundle.getString("langChooseTitle"));
-        saveFile.setText(bundle.getString("saveFile"));
-        readFile.setText(bundle.getString("readFile"));
-        doStep.setText(bundle.getString("doStep"));
-        backToStart.setText(bundle.getString("goBackToStart"));
-        langConfirm.setText("OK");
-    }
-
-    private void updateBoard() {
-        int counter = 0;
-        for (int i = 0; i < gameOfLifeBoard.getBoard().length; i++) {
-            for (int j = 0; j < gameOfLifeBoard.getBoard()[0].length; j++) {
-                Rectangle rectangle = (Rectangle) mainBoard.getChildren().get(counter++);
-                if (gameOfLifeBoard.getBoard()[i][j].isAlive()) {
-                    rectangle.setFill(Color.GREEN);
-                } else {
-                    rectangle.setFill(Color.RED);
-                }
-            }
-        }
-    }
-
-    public void goBackToStart(ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("IntroScene.fxml"));
-        Parent mainRoot = loader.load();
-
-        Stage stage = (Stage) backToStart.getScene().getWindow();
-
-        stage.setScene(new Scene(mainRoot));
-        stage.show();
-    }
-
-    private void reloadFxml(Locale locale) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass()
-                    .getResource("introScene.fxml"));
-            ResourceBundle bundle = ResourceBundle
-                    .getBundle("com.example.langData", locale);
-            loader.setResources(bundle);
-            Parent root = loader.load();
-            Stage stage = (Stage) langChooseMain.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            updateUI(bundle);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
 
 
