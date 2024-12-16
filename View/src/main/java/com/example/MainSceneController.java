@@ -62,8 +62,8 @@ public class MainSceneController {
 
     public void initialize() {
         try {
-            Locale enLanguage = new Locale("en");
-             ResourceBundle bundle = ResourceBundle.getBundle("langData", enLanguage);
+            Locale language = Locale.getDefault();
+            ResourceBundle bundle = ResourceBundle.getBundle("com.example.langData", language);
             updateUI(bundle);
 
         } catch (MissingResourceException e) {
@@ -222,24 +222,29 @@ public class MainSceneController {
     public void confirmLang(ActionEvent actionEvent) {
         Locale selectedLocale;
         ResourceBundle bundle;
+        if(langChooseMain.getSelectionModel().getSelectedItem() == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error!");
+            alert.setHeaderText(null);
+            alert.setContentText("Choose the language you would like to use!");
+            alert.showAndWait();
+        }
 
         switch (langChooseMain.getSelectionModel().getSelectedItem()) {
             case ENGLISH -> {
                 selectedLocale = new Locale("en");
-                bundle = ResourceBundle.getBundle("langData", selectedLocale);
             }
             case POLISH -> {
                 selectedLocale = new Locale("pl");
-                bundle = ResourceBundle.getBundle("langData", selectedLocale);
             }
             default -> {
                 selectedLocale = Locale.getDefault();
-                bundle = ResourceBundle.getBundle("langData", selectedLocale);
+
             }
         }
 
         Locale.setDefault(selectedLocale);
-        updateUI(bundle);
+        reloadFXML(selectedLocale);
     }
 
 
@@ -273,6 +278,19 @@ public class MainSceneController {
 
         stage.setScene(new Scene(mainRoot));
         stage.show();
+    }
+    private void reloadFXML(Locale locale) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("introScene.fxml"));
+            ResourceBundle bundle = ResourceBundle.getBundle("com.example.langData", locale);
+            loader.setResources(bundle);
+            Parent root = loader.load();
+            Stage stage = (Stage) langChooseMain.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            updateUI(bundle);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

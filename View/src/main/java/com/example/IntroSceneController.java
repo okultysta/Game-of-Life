@@ -13,6 +13,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -49,6 +50,7 @@ public class IntroSceneController {
     @FXML
     private Button startButton;
     private BoardInformation boardInfo;
+    private HashMap<String, String> ErrorMessages = new HashMap<>();
 
 
 
@@ -67,8 +69,8 @@ public class IntroSceneController {
         Language[] languages = Language.values();
         langChooseIntro.getItems().addAll(languages);
         try {
-            Locale enLanguage = new Locale.Builder().setLanguage("en").build();
-            ResourceBundle bundle = ResourceBundle.getBundle("i18n/introLangData", enLanguage);
+            Locale enLanguage = Locale.getDefault();
+            ResourceBundle bundle = ResourceBundle.getBundle("com.example.introLangData", enLanguage);
             updateUI(bundle);
 
         }
@@ -143,14 +145,14 @@ public class IntroSceneController {
         switch(langChooseIntro.getSelectionModel().getSelectedItem()) {
             case ENGLISH -> {
                 Locale enLang = new Locale.Builder().setLanguage("en").build();
-                ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", enLang);
+                ResourceBundle bundle = ResourceBundle.getBundle("com.example.introLangData", enLang);
                 Locale.setDefault(enLang);
                 updateUI(bundle);
                 break;
             }
             case POLISH -> {
                 Locale plLang = new Locale.Builder().setLanguage("pl").build();
-                ResourceBundle bundle = ResourceBundle.getBundle("i18n.introLangData", plLang);
+                ResourceBundle bundle = ResourceBundle.getBundle("com.example.introLangData", plLang);
                 Locale.setDefault(plLang);
                 updateUI(bundle);
                 break;
@@ -161,6 +163,7 @@ public class IntroSceneController {
         }
     }
     private void updateUI(ResourceBundle bundle) {
+
         title.setText(bundle.getString("title"));
         dimChoose.setText(bundle.getString("dimChoose"));
         chooseFillAmountTitle.setText(bundle.getString("chooseFillAmountTitle"));
