@@ -4,8 +4,8 @@ import javafx.util.StringConverter;
 
 public class CustomBooleanStringConverter extends StringConverter<Boolean> {
     @Override
-    public String toString(Boolean aBoolean) {
-        return aBoolean.toString();
+    public String toString(Boolean booolean) {
+        return booolean.toString();
     }
 
     @Override

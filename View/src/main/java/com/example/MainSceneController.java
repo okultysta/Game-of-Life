@@ -1,7 +1,6 @@
 package com.example;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
 import javafx.beans.property.adapter.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,20 +15,16 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.example.*;
 
 import java.io.IOException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import static java.awt.Color.GREEN;
-import static java.awt.Color.RED;
+import java.util.TreeMap;
 
 
 public class MainSceneController {
@@ -53,7 +48,7 @@ public class MainSceneController {
     private Text boardTitle;
     private GameOfLifeBoard gameOfLifeBoard;
     private GameOfLifeBoardDaoFactory factory;
-    private GameOfLifeBoardFactory gameOfLifeBoardFactory;
+    private TreeMap<String, String> errorMessages;
 
 
     public MainSceneController() {
@@ -61,13 +56,17 @@ public class MainSceneController {
 
 
     public void initialize() {
+        errorMessages = new TreeMap<>();
+        errorMessages.put("error", "");
+        errorMessages.put("noLanguage", "");
+        errorMessages.put("noFile", "");
         try {
             Locale language = Locale.getDefault();
             ResourceBundle bundle = ResourceBundle.getBundle("com.example.langData", language);
             updateUI(bundle);
 
         } catch (MissingResourceException e) {
-            System.out.println("dupa ni ma zasobu");
+            System.out.println("no resource");
         }
         Language[] languages = Language.values();
         langChooseMain.getItems().addAll(languages);
@@ -100,11 +99,10 @@ public class MainSceneController {
         mainBoard.getChildren().clear();
         gameOfLifeBoard = new GameOfLifeBoard(x, y, new PlainGameOfLifeSimulator(),
                 boardInformation.getFillPercentage());
-        gameOfLifeBoardFactory = new GameOfLifeBoardFactory(gameOfLifeBoard);
+        //gameOfLifeBoardFactory = new GameOfLifeBoardFactory(gameOfLifeBoard);
         JavaBeanBooleanPropertyBuilder propertyBuilder = JavaBeanBooleanPropertyBuilder.create();
-        JavaBeanObjectPropertyBuilder colorPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
+        //JavaBeanObjectPropertyBuilder colorPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
 
-        String[][] bridge = new String[x][y];
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
                 Rectangle cell = new Rectangle(25, 25);
@@ -121,11 +119,13 @@ public class MainSceneController {
 
                     //JavaBeanObjectProperty colorProperty = colorPropertyBuilder.bean(cell).name("fill").build();
                     //SimpleStringProperty colorStringProperty = new SimpleStringProperty(bridge[i][j]);
-                    JavaBeanBooleanProperty aliveProperty = propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
+                    JavaBeanBooleanProperty aliveProperty = propertyBuilder
+                            .bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
                             .getter("isAlive").setter("setCell").build();
-                    //JavaBeanBooleanProperty aliveHelperProperty = propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
+                    //JavaBeanBooleanProperty aliveHelperProperty =
+                    // propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
                     // .getter("isAlive").setter("setCell").build();
-                    StringProperty aliveStringProperty = new SimpleStringProperty();
+                    //StringProperty aliveStringProperty = new SimpleStringProperty();
                     aliveProperty.bind(Bindings.when(cell.fillProperty().isEqualTo(Color.GREEN))
                             .then(true)
                             .otherwise(false));
@@ -154,7 +154,7 @@ public class MainSceneController {
                             cell.setFill(Color.RED);
                         }
                     });
-                    
+
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
@@ -178,27 +178,19 @@ public class MainSceneController {
         }
     }
 
-    public GameOfLifeBoard getGameOfLifeBoard() {
-        return gameOfLifeBoard;
-    }
-
-
-    public GridPane getMainBoard() {
-        return mainBoard;
-    }
 
     public void saveToFile(ActionEvent actionEvent) {
         try {
             FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
             saver.write(gameOfLifeBoard);
-            FileGameOfLifeBoardDao saver2 = factory.getFileDao("OriginalFile.ser");
-            saver2.write(gameOfLifeBoardFactory.createInstance());
+            //FileGameOfLifeBoardDao saver2 = factory.getFileDao("OriginalFile.ser");
+
 
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error!");
             alert.setHeaderText(null);
-            alert.setContentText("No such file!");
+            alert.setContentText(errorMessages.get("noFile"));
             alert.showAndWait();
         }
     }
@@ -210,9 +202,9 @@ public class MainSceneController {
 
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error!");
+            alert.setTitle(errorMessages.get("error"));
             alert.setHeaderText(null);
-            alert.setContentText("No such file!");
+            alert.setContentText(errorMessages.get("noFile"));
             alert.showAndWait();
         }
         updateBoard();
@@ -221,21 +213,20 @@ public class MainSceneController {
 
     public void confirmLang(ActionEvent actionEvent) {
         Locale selectedLocale;
-        ResourceBundle bundle;
-        if(langChooseMain.getSelectionModel().getSelectedItem() == null) {
+        if (langChooseMain.getSelectionModel().getSelectedItem() == null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error!");
+            alert.setTitle(errorMessages.get("error"));
             alert.setHeaderText(null);
-            alert.setContentText("Choose the language you would like to use!");
+            alert.setContentText(errorMessages.get("noLanguage"));
             alert.showAndWait();
         }
 
         switch (langChooseMain.getSelectionModel().getSelectedItem()) {
             case ENGLISH -> {
-                selectedLocale = new Locale("en");
+                selectedLocale = new Locale.Builder().setLanguage("en").build();
             }
             case POLISH -> {
-                selectedLocale = new Locale("pl");
+                selectedLocale = new Locale.Builder().setLanguage("pl").build();
             }
             default -> {
                 selectedLocale = Locale.getDefault();
@@ -244,7 +235,7 @@ public class MainSceneController {
         }
 
         Locale.setDefault(selectedLocale);
-        reloadFXML(selectedLocale);
+        reloadFxml(selectedLocale);
     }
 
 
@@ -254,6 +245,8 @@ public class MainSceneController {
         saveFile.setText(bundle.getString("saveFile"));
         readFile.setText(bundle.getString("readFile"));
         doStep.setText(bundle.getString("doStep"));
+        backToStart.setText(bundle.getString("goBackToStart"));
+        langConfirm.setText("OK");
     }
 
     private void updateBoard() {
@@ -279,10 +272,13 @@ public class MainSceneController {
         stage.setScene(new Scene(mainRoot));
         stage.show();
     }
-    private void reloadFXML(Locale locale) {
+
+    private void reloadFxml(Locale locale) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("introScene.fxml"));
-            ResourceBundle bundle = ResourceBundle.getBundle("com.example.langData", locale);
+            FXMLLoader loader = new FXMLLoader(getClass()
+                    .getResource("introScene.fxml"));
+            ResourceBundle bundle = ResourceBundle
+                    .getBundle("com.example.langData", locale);
             loader.setResources(bundle);
             Parent root = loader.load();
             Stage stage = (Stage) langChooseMain.getScene().getWindow();
