@@ -13,15 +13,12 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static com.example.FillOption.High;
 import static com.example.FillOption.Low;
 import static com.example.FillOption.Medium;
-import static com.example.Language.ENGLISH;
+
 
 
 public class IntroSceneController {
@@ -50,13 +47,20 @@ public class IntroSceneController {
     @FXML
     private Button startButton;
     private BoardInformation boardInfo;
-    private HashMap<String, String> ErrorMessages = new HashMap<>();
-
+    private TreeMap<String, String> errorMessages;
 
 
     public IntroSceneController() {
         System.out.println("IntroSceneController");
         boardInfo = new BoardInformation();
+        errorMessages = new TreeMap<>();
+        errorMessages.put("noBoardFilling", "");
+        errorMessages.put("tooHighDim", "");
+        errorMessages.put("tooLowDim", "");
+        errorMessages.put("noDim", "");
+        errorMessages.put("noLanguage", "");
+        errorMessages.put("wrongFormat", "");
+        errorMessages.put("error", "");
     }
 
     @FXML
@@ -73,38 +77,37 @@ public class IntroSceneController {
             ResourceBundle bundle = ResourceBundle.getBundle("com.example.introLangData", enLanguage);
             updateUI(bundle);
 
-        }
-        catch (MissingResourceException e) {
-            System.out.println("dupa ni ma zasobu");
+        } catch (MissingResourceException e) {
+            System.out.println("no resource");
         }
     }
 
     public void startSimulation(ActionEvent actionEvent) throws IOException {
         if (xvalue.getText().isEmpty() || yvalue.getText().isEmpty()) {
-            showAlert("Enter value in dimension(s)!", true);
+            showAlert(errorMessages.get("noDim"), true);
             return;
         }
         try {
             Integer.parseInt(xvalue.getText());
             Integer.parseInt(yvalue.getText());
         } catch (NumberFormatException apud) {
-            showAlert("Enter a valid number!", true);
+            showAlert(errorMessages.get("wrongFormat"), true);
             return;
         }
         if (Integer.parseInt(xvalue.getText()) <= 0 || Integer.parseInt(yvalue.getText()) <= 0) {
-            showAlert("Enter a valid number!", true);
+            showAlert(errorMessages.get("wrongFormat"), true);
             return;
         }
         if (fillChoosing.getSelectionModel().getSelectedItem() == null) {
-            showAlert("Choose the board filling!", false);
+            showAlert(errorMessages.get("noBoardFilling"), false);
             return;
         }
         if (Integer.parseInt(xvalue.getText()) > 10 || Integer.parseInt(yvalue.getText()) > 10) {
-            showAlert("Dimensions must be not greater than 10", true);
+            showAlert(errorMessages.get("tooHighDim"), true);
             return;
         }
         if (Integer.parseInt(xvalue.getText()) < 2 || Integer.parseInt(yvalue.getText()) < 2) {
-            showAlert("Dimensions must not be lower than 2", true);
+            showAlert(errorMessages.get("tooLowDim"), true);
             return;
         }
         boardInfo.setFillPercentage(fillChoosing.getSelectionModel().getSelectedItem().getValue());
@@ -124,9 +127,6 @@ public class IntroSceneController {
     }
 
 
-    public BoardInformation getBoardInfo() {
-        return boardInfo;
-    }
 
     private void showAlert(String message, boolean dim) {
         if (dim) {
@@ -142,7 +142,11 @@ public class IntroSceneController {
     }
 
     public void changeLangIntro(ActionEvent actionEvent) {
-        switch(langChooseIntro.getSelectionModel().getSelectedItem()) {
+        if (langChooseIntro.getSelectionModel().getSelectedItem() == null) {
+            showAlert(errorMessages.get("noLanguage"), true);
+            return;
+        }
+        switch (langChooseIntro.getSelectionModel().getSelectedItem()) {
             case ENGLISH -> {
                 Locale enLang = new Locale.Builder().setLanguage("en").build();
                 ResourceBundle bundle = ResourceBundle.getBundle("com.example.introLangData", enLang);
@@ -158,10 +162,11 @@ public class IntroSceneController {
                 break;
             }
             default -> {
-                showAlert("Choose the language!", false);
+                showAlert(errorMessages.get("noLanguage"), false);
             }
         }
     }
+
     private void updateUI(ResourceBundle bundle) {
 
         title.setText(bundle.getString("title"));
@@ -170,5 +175,12 @@ public class IntroSceneController {
         xlabel.setText("X:");
         ylabel.setText("Y:");
         langChangeTitleIntro.setText(bundle.getString("langChangeTitleIntro"));
+        errorMessages.put("noBoardFilling", bundle.getString("noBoardFilling"));
+        errorMessages.put("tooHighDim", bundle.getString("tooHighDim"));
+        errorMessages.put("tooLowDim", bundle.getString("tooLowDim"));
+        errorMessages.put("noDim", bundle.getString("noDim"));
+        errorMessages.put("noLanguage", bundle.getString("noLanguage"));
+        errorMessages.put("wrongFormat", bundle.getString("wrongFormat"));
+        errorMessages.put("error", bundle.getString("error"));
     }
 }

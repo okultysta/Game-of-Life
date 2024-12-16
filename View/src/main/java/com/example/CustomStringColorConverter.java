@@ -12,10 +12,9 @@ public class CustomStringColorConverter extends StringConverter<Paint> {
 
     @Override
     public String toString(Paint color) {
-        if(color == Color.GREEN){
+        if (color == Color.GREEN) {
             return "Green";
-        }
-        else if(color == Color.RED){
+        } else if (color == Color.RED) {
             return "Red";
         }
         return "Unknown";
@@ -23,17 +22,15 @@ public class CustomStringColorConverter extends StringConverter<Paint> {
 
     @Override
     public Paint fromString(String s) {
-        if(s.equals("Green")){
+        if (s.equals("Green")) {
             return Color.GREEN;
-        }
-        else if(s.equals("Red")){
+        } else if (s.equals("Red")) {
             return Color.RED;
-        }
-        else {
+        } else {
             return Color.WHITE;
         }
     }
-        /*
+    /*
     public Color toColor(boolean state) {
         return state ? Color.GREEN : Color.RED;
     }
@@ -41,6 +38,6 @@ public class CustomStringColorConverter extends StringConverter<Paint> {
     public boolean fromColor(Color color) {
         return color.equals(Color.GREEN);
     }
-         */
+     */
 }
 
