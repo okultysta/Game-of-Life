@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PlainGameOfLifeSimulatorTest {
     //Test checking if method doStep works properly
-    /*
     @Test
     public void testDoStep() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board1 = new GameOfLifeBoard(3, 4, simulator);
+        GameOfLifeBoard board2 = new GameOfLifeBoard(3, 4, simulator, 30);
         GameOfLifeCell[][] initialBoard = board1.getBoard();
         board1.doSimulationStep();
         int alive;
@@ -41,5 +41,5 @@ public class PlainGameOfLifeSimulatorTest {
                 }
             }
         }
-    }*/
+    }
 }

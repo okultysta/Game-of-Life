@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import org.example.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -301,6 +302,25 @@ public class MainSceneController {
     }
 
 
+    public void readJDBC(ActionEvent actionEvent) {
+        JDBCGameOfLifeBoardDao dao = new JDBCGameOfLifeBoardDao();
+        try {
+            gameOfLifeBoard = dao.read();
+            updateBoard();
+            setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard()[0].length);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void writeDB(ActionEvent actionEvent) {
+        JDBCGameOfLifeBoardDao dao = new JDBCGameOfLifeBoardDao();
+        try {
+            dao.write(gameOfLifeBoard);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 
 
