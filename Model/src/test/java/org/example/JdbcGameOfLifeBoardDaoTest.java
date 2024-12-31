@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JDBCGameOfLifeBoardDaoTest {
+public class JdbcGameOfLifeBoardDaoTest {
     GameOfLifeSimulator gameOfLifeSimulator = new PlainGameOfLifeSimulator();
     GameOfLifeBoard board = new GameOfLifeBoard(4, 3, gameOfLifeSimulator);
 
@@ -17,14 +17,18 @@ public class JDBCGameOfLifeBoardDaoTest {
     public void JDBCWriteTest() {
         GameOfLifeSimulator gameOfLifeSimulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board = new GameOfLifeBoard(4, 3, gameOfLifeSimulator);
-        JDBCGameOfLifeBoardDao writer =  new JDBCGameOfLifeBoardDao();
+        JdbcGameOfLifeBoardDao writer =  new JdbcGameOfLifeBoardDao();
+        JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao();
         try {
             writer.write(board);
-            GameOfLifeBoard boardRead = writer.read();
-            assertEquals(board, boardRead);
+
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+        try {
+            GameOfLifeBoard boardRead = writer.read();
+            assertEquals(board, boardRead);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

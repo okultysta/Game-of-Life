@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -21,14 +22,17 @@ import javafx.stage.Stage;
 import org.example.*;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.TreeMap;
+import java.util.*;
 
 
 public class MainSceneController {
+    @FXML
+   private Button readJDBC;
+    @FXML
+    private Button writeDB;
     @FXML
     private Button langConfirm;
     @FXML
@@ -52,7 +56,6 @@ public class MainSceneController {
     private TreeMap<String, String> errorMessages;
     //private BoardPrototype originalBorad;
 
-
     public MainSceneController() {
     }
 
@@ -62,6 +65,7 @@ public class MainSceneController {
         errorMessages.put("error", "");
         errorMessages.put("noLanguage", "");
         errorMessages.put("noFile", "");
+        errorMessages.put("noDatabase", "");
         try {
             Locale language = Locale.getDefault();
             ResourceBundle bundle = ResourceBundle.getBundle("com.example.langData", language);
@@ -184,6 +188,7 @@ public class MainSceneController {
 
 
     private void updateUI(ResourceBundle bundle) {
+        errorMessages.clear();
         boardTitle.setText(bundle.getString("boardTitle"));
         langChooseTitle.setText(bundle.getString("langChooseTitle"));
         saveFile.setText(bundle.getString("saveFile"));
@@ -191,9 +196,12 @@ public class MainSceneController {
         doStep.setText(bundle.getString("doStep"));
         backToStart.setText(bundle.getString("goBackToStart"));
         langConfirm.setText("OK");
-        errorMessages.put("error", "");
-        errorMessages.put("noLanguage", "");
-        errorMessages.put("noFile", "");
+        errorMessages.put("error", bundle.getString("error"));
+        errorMessages.put("noLanguage",bundle.getString("noLanguage"));
+        errorMessages.put("noFile", bundle.getString("noFile"));
+        errorMessages.put("noDB", bundle.getString("noDB"));
+        writeDB.setText(bundle.getString("writeDB"));
+        readJDBC.setText(bundle.getString("readJDBC"));
 
     }
 
@@ -302,25 +310,49 @@ public class MainSceneController {
     }
 
 
-    public void readJDBC(ActionEvent actionEvent) {
-        JDBCGameOfLifeBoardDao dao = new JDBCGameOfLifeBoardDao();
+    public void readJdbc(ActionEvent actionEvent) {
+        String dbNameCurr=getDbName();
+        JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao(dbNameCurr);
+
         try {
             gameOfLifeBoard = dao.read();
             updateBoard();
             setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard()[0].length);
         } catch (SQLException e) {
+
+            throw new RuntimeException("Błąd podczas odczytu danych z bazy", e);
+        } catch (IllegalArgumentException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(errorMessages.get("error"));
+            alert.setHeaderText(null);
+            alert.setContentText(errorMessages.get("noDB"));
+            alert.showAndWait();
             throw new RuntimeException(e);
+
         }
     }
 
+    private String getDbName() {
+            TextInputDialog dialog = new TextInputDialog("default");
+            dialog.setTitle("Wprowadź nazwę bazy danych");
+            dialog.setHeaderText("Podaj nazwę bazy danych:");
+            dialog.setContentText("Nazwa bazy:");
+            Optional<String> result = dialog.showAndWait();
+            return result.orElseThrow(() -> new IllegalArgumentException("Podaj nazwę bazy danych!"));
+    }
+
+
     public void writeDB(ActionEvent actionEvent) {
-        JDBCGameOfLifeBoardDao dao = new JDBCGameOfLifeBoardDao();
+        String dbNameCurr = getDbName();
+        JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao(dbNameCurr);
         try {
             dao.write(gameOfLifeBoard);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
+
 }
 
 

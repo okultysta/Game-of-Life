@@ -53,8 +53,8 @@ public class GameOfLifeBoard implements Serializable, Cloneable {
 
     public GameOfLifeBoard(GameOfLifeCell[][] board, GameOfLifeSimulator simulator) {
         this.board = new GameOfLifeCell[board.length][board[0].length];
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board[0].length; j++) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
                 this.board[i][j] = new GameOfLifeCell(board[i][j].isAlive());
             }
         }
