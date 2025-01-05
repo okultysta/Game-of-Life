@@ -22,7 +22,6 @@ import static com.example.FillOption.Low;
 import static com.example.FillOption.Medium;
 
 
-
 public class IntroSceneController {
     @FXML
     private Button langConfirmIntro;
@@ -85,7 +84,7 @@ public class IntroSceneController {
         }
     }
 
-    public void startSimulation(ActionEvent actionEvent)  {
+    public void startSimulation(ActionEvent actionEvent) {
         if (xvalue.getText().isEmpty() || yvalue.getText().isEmpty()) {
             showAlert(errorMessages.get("noDim"), true);
             return;
@@ -125,15 +124,14 @@ public class IntroSceneController {
             stage.setScene(mainScene);
             mainController.initializeBoard(boardInfo);
             stage.show();
-        } catch(IOException ioe) {
+        } catch (IOException ioe) {
             throw new InvalidSceneFileException("Invalid scene file!", ioe);
-        }  catch (InvalidSceneFileException e) {
+        } catch (InvalidSceneFileException e) {
             showAlert(e.getMessage(), false);
             System.exit(1);
         }
 
     }
-
 
 
     private void showAlert(String message, boolean dim) {

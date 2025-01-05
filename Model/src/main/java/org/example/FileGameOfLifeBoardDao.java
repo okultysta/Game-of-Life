@@ -14,13 +14,13 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         this.filename = filename;
     }
 
-    public GameOfLifeBoard read() throws RuntimeException {
+    public GameOfLifeBoard read() throws DaoException {
         try (ObjectInputStream read = new ObjectInputStream(new FileInputStream(filename))) {
             return (GameOfLifeBoard) read.readObject();
         } catch (IOException e) {
-            throw new RuntimeException("Error reading from file", e);
+            throw new DaoException("Error reading from file", e);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Wrong class", e);
         }
     }
 
@@ -28,7 +28,7 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         try (ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(filename))) {
             write.writeObject(board);
         } catch (IOException e) {
-            throw new DaoException("Could not save the board to file "+filename, e);
+            throw new DaoException("Could not save the board to file " + filename, e);
         }
     }
 

@@ -2,8 +2,9 @@ package org.example;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 
-public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>,AutoCloseable {
+public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable {
     private final String url = "jdbc:postgresql://localhost:5432/GameOfLife";
     private final String boardName;
 
@@ -16,7 +17,7 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>,AutoCloseabl
     }
 
     @Override
-    public GameOfLifeBoard read() throws SQLException, DaoException {
+    public GameOfLifeBoard read() throws DaoException {
         try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
             try (PreparedStatement checkBoardStatement = connection.prepareStatement(
                     "SELECT COUNT(*) FROM board WHERE name = ?")) {
@@ -29,10 +30,11 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>,AutoCloseabl
                 throw e;
             }
 
-            int maxX = -1, maxY = -1;
+            int maxX = -1;
+            int maxY = -1;
             try (PreparedStatement dimensionStatement = connection.prepareStatement(
-                    "SELECT MAX(x) AS max_x, MAX(y) AS max_y FROM cell " +
-                            "JOIN board ON cell.board_id = board.board_id WHERE board.name = ?")) {
+                    "SELECT MAX(x) AS max_x, MAX(y) AS max_y FROM cell "
+                            + "JOIN board ON cell.board_id = board.board_id WHERE board.name = ?")) {
                 dimensionStatement.setString(1, boardName);
                 ResultSet dimensionResultSet = dimensionStatement.executeQuery();
                 if (dimensionResultSet.next()) {
@@ -45,7 +47,8 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>,AutoCloseabl
                 throw new IllegalArgumentException("No cells found for board: " + boardName);
             }
 
-            int width = maxX + 1, height = maxY + 1;
+            int width = maxX + 1;
+            int height = maxY + 1;
             GameOfLifeCell[][] boardArray = new GameOfLifeCell[height][width];
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
@@ -74,25 +77,28 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>,AutoCloseabl
     }
 
     @Override
-    public void write(GameOfLifeBoard obj) throws IOException, DaoException {
+    public void write(GameOfLifeBoard obj) throws DaoException {
         try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
             connection.setAutoCommit(false); // Start transaction
 
             try {
                 try (Statement statement = connection.createStatement()) {
-                    statement.execute("CREATE TABLE IF NOT EXISTS board (" +
-                            "board_id SERIAL PRIMARY KEY, " +
-                            "name VARCHAR(100) NOT NULL" +
+                    statement.execute("CREATE TABLE IF NOT EXISTS board ("
+                            +
+                            "board_id SERIAL PRIMARY KEY, "
+                            +
+                            "name VARCHAR(100) NOT NULL"
+                            +
                             ");");
 
-                    statement.execute("CREATE TABLE IF NOT EXISTS cell (" +
-                            "board_id INTEGER, " +
-                            "state BOOLEAN, " +
-                            "x INTEGER, " +
-                            "y INTEGER, " +
-                            "PRIMARY KEY (board_id, x, y), " +
-                            "FOREIGN KEY (board_id) REFERENCES board(board_id) ON DELETE CASCADE ON UPDATE CASCADE" +
-                            ");");
+                    statement.execute("CREATE TABLE IF NOT EXISTS cell ("
+                            + "board_id INTEGER, "
+                            + "state BOOLEAN, "
+                            + "x INTEGER, "
+                            + "y INTEGER, "
+                            + "PRIMARY KEY (board_id, x, y), " + "FOREIGN KEY (board_id) REFERENCES board(board_id) "
+                            + "ON DELETE CASCADE ON UPDATE CASCADE"
+                            + ");");
                 }
 
                 try (PreparedStatement deleteCellsStatement = connection.prepareStatement(
@@ -152,5 +158,24 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>,AutoCloseabl
     @Override
     public void close() throws Exception {
 
+    }
+
+    public ArrayList<String> getBoardsNames() throws DaoException {
+        ArrayList<String> boardsNames = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
+            try (Statement statement = connection.createStatement()) {
+                statement.execute("SELECT name FROM board");
+                ResultSet resultSet = statement.getResultSet();
+                if (!resultSet.next()) {
+                    throw new NoBoardFoundException("No boards found!", null);
+                }
+                while (resultSet.next()) {
+                    boardsNames.add(resultSet.getString("name"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Error retrieving the boards names", e);
+        }
+        return boardsNames;
     }
 }

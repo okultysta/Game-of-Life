@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -24,15 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.*;
 
 
 public class MainSceneController {
     @FXML
-   private Button readJDBC;
+    private Button readJdbc;
     @FXML
     private Button writeDB;
     @FXML
@@ -136,7 +130,7 @@ public class MainSceneController {
             //FileGameOfLifeBoardDao saver2 = factory.getFileDao("OriginalFile.ser");
 
 
-        } catch (IOException e) {
+        } catch (DaoException e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(errorMessages.get("error"));
             alert.setHeaderText(null);
@@ -146,18 +140,13 @@ public class MainSceneController {
     }
 
     public void readFromFile(ActionEvent actionEvent) {
+        FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
         try {
-            FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
             gameOfLifeBoard = saver.read();
-            setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
-
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(errorMessages.get("error"));
-            alert.setHeaderText(null);
-            alert.setContentText(errorMessages.get("noFile"));
-            alert.showAndWait();
+        } catch (DaoException e) {
+            logger.error(e.getMessage());
         }
+        setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
         updateBoard();
 
     }
@@ -200,10 +189,10 @@ public class MainSceneController {
         backToStart.setText(bundle.getString("goBackToStart"));
         langConfirm.setText("OK");
         errorMessages.put("error", bundle.getString("error"));
-        errorMessages.put("noLanguage",bundle.getString("noLanguage"));
+        errorMessages.put("noLanguage", bundle.getString("noLanguage"));
         errorMessages.put("noFile", bundle.getString("noFile"));
         writeDB.setText(bundle.getString("writeDB"));
-        readJDBC.setText(bundle.getString("readJDBC"));
+        readJdbc.setText(bundle.getString("readJDBC"));
         errorMessages.put("noDB", bundle.getString("noDB"));
     }
 
@@ -313,15 +302,27 @@ public class MainSceneController {
 
 
     public void readJdbc(ActionEvent actionEvent) {
-        String dbNameCurr=getDbName();
-        Dao<GameOfLifeBoard> dao =factory.getJdbcDao(dbNameCurr);
+        String dbNameCurr;
+        JdbcGameOfLifeBoardDao dao = factory.getJdbcDao();
+        ChoiceDialog<String> chooseBoard;
         try {
+            chooseBoard = new ChoiceDialog<String>("", dao.getBoardsNames());
+            chooseBoard.setTitle("Choose Board!");
+            chooseBoard.setHeaderText("Choose Board");
+            chooseBoard.setContentText("Choose Board");
+            chooseBoard.showAndWait();
+            dbNameCurr = chooseBoard.getSelectedItem();
+            dao = factory.getJdbcDao(dbNameCurr);
+        } catch (DaoException e) {
+            logger.error(e.getMessage());
+            System.out.println("dupa");
+            return;
+        }
+        try {
+            GameOfLifeBoard old = gameOfLifeBoard;
             gameOfLifeBoard = dao.read();
-            updateBoard();
             setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard()[0].length);
-        } catch (SQLException e) {
-
-            throw new RuntimeException("Błąd podczas odczytu danych z bazy", e);
+            updateBoard();
         } catch (IllegalArgumentException e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(errorMessages.get("error"));
@@ -336,29 +337,42 @@ public class MainSceneController {
     }
 
     private String getDbName() {
-            TextInputDialog dialog = new TextInputDialog("default");
-            dialog.setTitle("Wprowadź nazwę bazy danych");
-            dialog.setHeaderText("Podaj nazwę bazy danych:");
-            dialog.setContentText("Nazwa bazy:");
-            Optional<String> result = dialog.showAndWait();
-            return result.orElseThrow(() -> new IllegalArgumentException("Podaj nazwę bazy danych!"));
+        TextInputDialog dialog = new TextInputDialog("default");
+        dialog.setTitle("Wprowadź nazwę bazy danych");
+        dialog.setHeaderText("Podaj nazwę bazy danych:");
+        dialog.setContentText("Nazwa bazy:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent() && !result.get().isBlank()) {
+            return result.get();
+        } else {
+            throw new IllegalArgumentException("Podaj nazwę bazy danych!");
+        }
     }
 
 
     public void writeDB(ActionEvent actionEvent) {
-        String dbNameCurr = getDbName();
-        Dao<GameOfLifeBoard> dao =factory.getJdbcDao(dbNameCurr);
+        String dbNameCurr = "";
+        try {
+            dbNameCurr = getDbName();
+        } catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
+        Dao<GameOfLifeBoard> dao = factory.getJdbcDao(dbNameCurr);
         try {
             dao.write(gameOfLifeBoard);
-        } catch (DaoException | IOException e) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(errorMessages.get("error"));
-            alert.setHeaderText(null);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-
+        } catch (DaoException e) {
+            showError(e.getMessage());
         }
 
+    }
+
+    public void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(errorMessages.get("error"));
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }

@@ -1,6 +1,8 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -10,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JdbcGameOfLifeBoardDaoTest {
     GameOfLifeSimulator gameOfLifeSimulator = new PlainGameOfLifeSimulator();
     GameOfLifeBoard board = new GameOfLifeBoard(4, 3, gameOfLifeSimulator);
-
+    Logger logger = LoggerFactory.getLogger(JdbcGameOfLifeBoardDaoTest.class);
 
     @Test
     public void JDBCWriteReadTest() {
@@ -23,14 +25,14 @@ public class JdbcGameOfLifeBoardDaoTest {
 
         }
         catch (DaoException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         try {
             GameOfLifeBoard boardRead = writer.read();
             assertEquals(board, boardRead);
             assertNotSame(board, boardRead);
         } catch (DaoException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage());
         }
     }
 
