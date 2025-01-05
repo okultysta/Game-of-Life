@@ -357,6 +357,7 @@ public class MainSceneController {
             dbNameCurr = getDbName();
         } catch (IllegalArgumentException e) {
             showError(e.getMessage());
+            logger.warn(e.getMessage());
         }
         Dao<GameOfLifeBoard> dao = factory.getJdbcDao(dbNameCurr);
         try {
