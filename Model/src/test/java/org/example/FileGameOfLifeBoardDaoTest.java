@@ -17,33 +17,38 @@ public class FileGameOfLifeBoardDaoTest {
     }
 
     private static class fakeClass implements Serializable {
-        int data =10;
+        int data = 10;
     }
 
     @Test
-    public void FileGameOfLifeBoardDaoWriteTest() throws IOException {
+    public void FileGameOfLifeBoardDaoWriteTest() {
+        try {
             dao.write(board);
-            GameOfLifeBoard board2 = (GameOfLifeBoard) dao.read();
-            assertEquals(board.getBoard().length, board2.getBoard().length);
-            assertEquals(board, board2);
-            assertEquals(board.hashCode(), board2.hashCode());
-            assertEquals(board.getRow(0), board2.getRow(0));
-            assertEquals(board.getColumn(1), board2.getColumn(1));
-            assertEquals(board.getColumn(0), board2.getColumn(0));
+        } catch (DaoException e) {
+            throw new RuntimeException(e);
+        }
+        GameOfLifeBoard board2 = (GameOfLifeBoard) dao.read();
+        assertEquals(board.getBoard().length, board2.getBoard().length);
+        assertEquals(board, board2);
+        assertEquals(board.hashCode(), board2.hashCode());
+        assertEquals(board.getRow(0), board2.getRow(0));
+        assertEquals(board.getColumn(1), board2.getColumn(1));
+        assertEquals(board.getColumn(0), board2.getColumn(0));
+
     }
 
 
     @Test
     public void FileGameOfLifeBoardDaoReadTest() throws Exception {
-            dao.write(board);
-            GameOfLifeBoard board2 = dao.read();
-            assertEquals(board.getBoard().length, board2.getBoard().length);
-            assertEquals(board.getBoard()[0].length, board2.getBoard()[0].length);
-            assertEquals(board, board2);
-            assertEquals(board.getRow(0), board2.getRow(0));
-            assertEquals(board.getColumn(1), board2.getColumn(1));
-            assertEquals(board.getColumn(0), board2.getColumn(0));
-            assertEquals(board.hashCode(), board2.hashCode());
+        dao.write(board);
+        GameOfLifeBoard board2 = dao.read();
+        assertEquals(board.getBoard().length, board2.getBoard().length);
+        assertEquals(board.getBoard()[0].length, board2.getBoard()[0].length);
+        assertEquals(board, board2);
+        assertEquals(board.getRow(0), board2.getRow(0));
+        assertEquals(board.getColumn(1), board2.getColumn(1));
+        assertEquals(board.getColumn(0), board2.getColumn(0));
+        assertEquals(board.hashCode(), board2.hashCode());
 
         assertThrows(FileNotFoundException.class, () -> new ObjectOutputStream(new FileOutputStream("")));
         try (FileGameOfLifeBoardDao writer1 = new FileGameOfLifeBoardDao("")) {
@@ -58,7 +63,7 @@ public class FileGameOfLifeBoardDaoTest {
             assertThrows(RuntimeException.class, dao::read);
         }
 
-}
+    }
 
     @Test
     public void FileGameOfLifeBoardDaoCloseTest() throws Exception {

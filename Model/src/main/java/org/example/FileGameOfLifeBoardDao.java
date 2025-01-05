@@ -24,9 +24,11 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         }
     }
 
-    public void write(GameOfLifeBoard board) throws IOException {
+    public void write(GameOfLifeBoard board) throws DaoException {
         try (ObjectOutputStream write = new ObjectOutputStream(new FileOutputStream(filename))) {
             write.writeObject(board);
+        } catch (IOException e) {
+            throw new DaoException("Could not save the board to file "+filename, e);
         }
     }
 

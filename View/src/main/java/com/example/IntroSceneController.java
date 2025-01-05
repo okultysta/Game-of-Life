@@ -11,6 +11,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -48,6 +50,7 @@ public class IntroSceneController {
     private Button startButton;
     private BoardInformation boardInfo;
     private TreeMap<String, String> errorMessages;
+    private static final Logger logger = LoggerFactory.getLogger(IntroSceneController.class);
 
 
     public IntroSceneController() {
@@ -78,11 +81,11 @@ public class IntroSceneController {
             updateUI(bundle);
 
         } catch (MissingResourceException e) {
-            System.out.println("no resource");
+            logger.error(e.getMessage());
         }
     }
 
-    public void startSimulation(ActionEvent actionEvent) throws IOException {
+    public void startSimulation(ActionEvent actionEvent)  {
         if (xvalue.getText().isEmpty() || yvalue.getText().isEmpty()) {
             showAlert(errorMessages.get("noDim"), true);
             return;
@@ -114,15 +117,20 @@ public class IntroSceneController {
         boardInfo.setRow(Integer.parseInt(yvalue.getText()));
         boardInfo.setCol(Integer.parseInt(xvalue.getText()));
         Stage stage = (Stage) startButton.getScene().getWindow();
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScene.fxml"));
-        Parent mainRoot = loader.load();
-        Scene mainScene = new Scene(mainRoot);
-
-        MainSceneController mainController = loader.getController();
-        stage.setScene(mainScene);
-        mainController.initializeBoard(boardInfo);
-        stage.show();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScene.fxml"));
+            Parent mainRoot = loader.load();
+            Scene mainScene = new Scene(mainRoot);
+            MainSceneController mainController = loader.getController();
+            stage.setScene(mainScene);
+            mainController.initializeBoard(boardInfo);
+            stage.show();
+        } catch(IOException ioe) {
+            throw new InvalidSceneFileException("Invalid scene file!", ioe);
+        }  catch (InvalidSceneFileException e) {
+            showAlert(e.getMessage(), false);
+            System.exit(1);
+        }
 
     }
 
@@ -139,6 +147,7 @@ public class IntroSceneController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+        logger.warn(message);
     }
 
     public void changeLangIntro(ActionEvent actionEvent) {

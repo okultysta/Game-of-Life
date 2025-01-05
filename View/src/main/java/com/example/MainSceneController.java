@@ -20,6 +20,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -55,6 +57,7 @@ public class MainSceneController {
     private GameOfLifeBoardDaoFactory factory;
     private TreeMap<String, String> errorMessages;
     //private BoardPrototype originalBorad;
+    private static final Logger logger = LoggerFactory.getLogger(MainSceneController.class);
 
     public MainSceneController() {
     }
@@ -72,7 +75,7 @@ public class MainSceneController {
             updateUI(bundle);
 
         } catch (MissingResourceException e) {
-            System.out.println("no resource");
+            logger.error("no resource!");
         }
         Language[] languages = Language.values();
         langChooseMain.getItems().addAll(languages);
@@ -199,10 +202,9 @@ public class MainSceneController {
         errorMessages.put("error", bundle.getString("error"));
         errorMessages.put("noLanguage",bundle.getString("noLanguage"));
         errorMessages.put("noFile", bundle.getString("noFile"));
-        errorMessages.put("noDB", bundle.getString("noDB"));
         writeDB.setText(bundle.getString("writeDB"));
         readJDBC.setText(bundle.getString("readJDBC"));
-
+        errorMessages.put("noDB", bundle.getString("noDB"));
     }
 
     private void updateBoard() {
@@ -241,7 +243,7 @@ public class MainSceneController {
             stage.setScene(new Scene(root));
             updateUI(bundle);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("invalid or absence of file!");
         }
     }
 
@@ -312,8 +314,7 @@ public class MainSceneController {
 
     public void readJdbc(ActionEvent actionEvent) {
         String dbNameCurr=getDbName();
-        JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao(dbNameCurr);
-
+        Dao<GameOfLifeBoard> dao =factory.getJdbcDao(dbNameCurr);
         try {
             gameOfLifeBoard = dao.read();
             updateBoard();
@@ -329,6 +330,8 @@ public class MainSceneController {
             alert.showAndWait();
             throw new RuntimeException(e);
 
+        } catch (DaoException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -344,11 +347,16 @@ public class MainSceneController {
 
     public void writeDB(ActionEvent actionEvent) {
         String dbNameCurr = getDbName();
-        JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao(dbNameCurr);
+        Dao<GameOfLifeBoard> dao =factory.getJdbcDao(dbNameCurr);
         try {
             dao.write(gameOfLifeBoard);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (DaoException | IOException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(errorMessages.get("error"));
+            alert.setHeaderText(null);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+
         }
 
     }
