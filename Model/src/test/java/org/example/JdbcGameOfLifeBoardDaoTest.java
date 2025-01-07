@@ -39,7 +39,7 @@ public class JdbcGameOfLifeBoardDaoTest {
     @Test
     public void testTransactionRollbackOnError() {
         GameOfLifeBoard invalidBoard = null;
-        Exception exception = assertThrows(NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             try (JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao("invalidBoard")) {
                 dao.write(invalidBoard);
             }
@@ -54,6 +54,12 @@ public class JdbcGameOfLifeBoardDaoTest {
                 dao.write(new GameOfLifeBoard(4, 3, gameOfLifeSimulator));
             }
         });
+    }
+
+    @Test
+    public void testGetBoardNames() throws DaoException {
+        JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao();
+        assertDoesNotThrow(() -> {reader.getBoardsNames();});
     }
 
 

@@ -9,5 +9,8 @@ public class GameOfLifeBoardDaoFactoryTest {
     public void gameOfLifeBoardDaoFactoryProductionTest() throws Exception {
         GameOfLifeBoardDaoFactory factory = new GameOfLifeBoardDaoFactory();
         assertInstanceOf(FileGameOfLifeBoardDao.class, (factory.getFileDao("src/testFile.txt")));
+        assertInstanceOf(JdbcGameOfLifeBoardDao.class, (factory.getJdbcDao("testJdbcDao")));
+        assertInstanceOf(JdbcGameOfLifeBoardDao.class, (factory.getJdbcDao()));
     }
+
 }
