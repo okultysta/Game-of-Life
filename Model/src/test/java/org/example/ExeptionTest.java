@@ -11,7 +11,7 @@ public class ExeptionTest {
         try{
             throw new IOException("Błąd");
         } catch(IOException e){
-            NoBoardFoundException exeption = new NoBoardFoundException("wyjątek", e);
+            ObjectNotFoundException exeption = new ObjectNotFoundException("wyjątek", e);
             assertEquals(exeption.getMessage(), "wyjątek");
             assertEquals(exeption.getCause().getClass(), IOException.class);
         }
