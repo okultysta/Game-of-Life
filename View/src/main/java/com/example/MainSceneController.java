@@ -211,6 +211,7 @@ public class MainSceneController {
         errorMessages.put("dbName", bundle.getString("dbName"));
         errorMessages.put("chooseBoard", bundle.getString("chooseBoard"));
         errorMessages.put("boardSaved", bundle.getString("boardSaved"));
+        errorMessages.put("wrongInit", bundle.getString("wrongInit"));
     }
 
     private void updateBoard() {
@@ -309,7 +310,11 @@ public class MainSceneController {
                     });
 
                 } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
+                    try {
+                        throw new PropertyBuildException(errorMessages.get("wrongInit"), e);
+                    } catch (PropertyBuildException ex) {
+                        showError(ex.getMessage());
+                    }
                 }
 
 
@@ -332,6 +337,7 @@ public class MainSceneController {
             dao = factory.getJdbcDao(dbNameCurr);
         } catch (DaoException e) {
             logger.error(e.getMessage());
+            showError(errorMessages.get(e.getMessage()));
             return;
         }
         try {
@@ -348,7 +354,8 @@ public class MainSceneController {
             throw new RuntimeException(e);
 
         } catch (DaoException e) {
-            throw new RuntimeException(e);
+            showError(errorMessages.get(e.getMessage()));
+            logger.error(errorMessages.get(e.getMessage()));
         }
     }
 
@@ -379,7 +386,8 @@ public class MainSceneController {
         try {
             dao.write(gameOfLifeBoard);
         } catch (DaoException e) {
-            showError(e.getMessage());
+            showError(errorMessages.get(e.getMessage()));
+            logger.error(errorMessages.get(e.getMessage()));
         }
         logger.info("{} {}", errorMessages.get("boardSaved"), dbNameCurr);
 
