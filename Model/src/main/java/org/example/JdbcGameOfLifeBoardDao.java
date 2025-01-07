@@ -1,6 +1,5 @@
 package org.example;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -24,10 +23,10 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
                 checkBoardStatement.setString(1, boardName);
                 ResultSet resultSet = checkBoardStatement.executeQuery();
                 if (resultSet.next() && resultSet.getInt(1) == 0) {
-                    throw new IllegalArgumentException("Board with name '" + boardName + "' does not exist.");
+                    throw new ObjectNotFoundException("NosuchBoard", null);
                 }
             } catch (SQLException e) {
-                throw e;
+                throw new DbReadWriteException("BadStatement", e);
             }
 
             int maxX = -1;
@@ -44,7 +43,7 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
             }
 
             if (maxX == -1 || maxY == -1) {
-                throw new IllegalArgumentException("No cells found for board: " + boardName);
+                throw new IllegalArgumentException("BadBoardDims", null);
             }
 
             int width = maxX + 1;
@@ -72,7 +71,7 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
 
             return new GameOfLifeBoard(boardArray, new PlainGameOfLifeSimulator());
         } catch (SQLException e) {
-            throw new DbReadWriteException("Error reading board data", e);
+            throw new DbReadWriteException("DbConnectError", e);
         }
     }
 
@@ -123,7 +122,7 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
                     if (generatedKeys.next()) {
                         boardId = generatedKeys.getInt(1);
                     } else {
-                        throw new SQLException("Failed to insert board and retrieve board_id.");
+                        throw new DbReadWriteException("BadInsert", null);
                     }
                 }
 
@@ -146,12 +145,12 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
-                throw new TransactionFailedException("Transaction failed, rolled back", e);
+                throw new TransactionFailedException("TransactionFailed", e);
             } finally {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            throw new DbConnectionException("Database connection error", e);
+            throw new DbConnectionException("DbConnectError", e);
         }
     }
 
@@ -167,14 +166,14 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
                 statement.execute("SELECT name FROM board");
                 ResultSet resultSet = statement.getResultSet();
                 if (!resultSet.next()) {
-                    throw new NoBoardFoundException("No boards found!", null);
+                    throw new ObjectNotFoundException("NoBoards", null);
                 }
                 while (resultSet.next()) {
                     boardsNames.add(resultSet.getString("name"));
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Error retrieving the boards names", e);
+            throw new DaoException("BoardsNamesError", e);
         }
         return boardsNames;
     }
