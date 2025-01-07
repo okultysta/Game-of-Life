@@ -341,7 +341,6 @@ public class MainSceneController {
             return;
         }
         try {
-            GameOfLifeBoard old = gameOfLifeBoard;
             gameOfLifeBoard = dao.read();
             setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard()[0].length);
             updateBoard();

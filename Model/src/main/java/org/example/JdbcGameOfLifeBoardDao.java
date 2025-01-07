@@ -44,7 +44,7 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
             }
 
             if (maxX == -1 || maxY == -1) {
-                throw new IllegalArgumentException("BadBoardDims", null);
+                throw new DbReadWriteException("BadBoardDims", null);
             }
 
             int width = maxX + 1;
@@ -156,7 +156,7 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         closed = true;
     }
 
@@ -182,4 +182,5 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         }
         return boardsNames;
     }
+
 }

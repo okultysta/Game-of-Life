@@ -97,8 +97,10 @@ public class GameOfLifeCell implements Serializable, Comparable<GameOfLifeCell>,
     @Override
     public int compareTo(GameOfLifeCell o) {
         if (o == null) {
-            throw new NullPointerException();
-        }
+
+            throw new NothingToCompareException("objectIsNull",null);
+
+            }
         if (this.alive != o.alive) {
             return Boolean.compare(this.alive, o.alive);
         }
