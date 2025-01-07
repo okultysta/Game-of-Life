@@ -21,14 +21,14 @@ public class MainApplication extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("IntroScene.fxml"));
         AnchorPane root = null;
-        //Logger logger = LoggerFactory.getLogger(MainApplication.class);
+        Logger logger = LoggerFactory.getLogger(MainApplication.class);
         try {
             root = loader.load();
         } catch (IOException ioe) {
             throw new InvalidSceneFileException("Invalid scene file!", ioe);
         } catch (InvalidSceneFileException e) {
-            //logger.error(e.getMessage());
-            //System.exit(1);
+            logger.error(e.getMessage());
+            System.exit(1);
             System.out.println(e.getMessage());
         }
         Scene scene = new Scene(root);
