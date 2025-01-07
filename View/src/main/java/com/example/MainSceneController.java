@@ -1,5 +1,6 @@
 package com.example;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.adapter.*;
 import javafx.event.ActionEvent;
@@ -50,7 +51,6 @@ public class MainSceneController {
     private GameOfLifeBoard gameOfLifeBoard;
     private GameOfLifeBoardDaoFactory factory;
     private TreeMap<String, String> errorMessages;
-    //private BoardPrototype originalBorad;
     private static final Logger logger = LoggerFactory.getLogger(MainSceneController.class);
 
     public MainSceneController() {
@@ -70,6 +70,7 @@ public class MainSceneController {
 
         } catch (MissingResourceException e) {
             logger.error("no resource!");
+            e.printStackTrace();
         }
         Language[] languages = Language.values();
         langChooseMain.getItems().addAll(languages);
@@ -134,7 +135,7 @@ public class MainSceneController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(errorMessages.get("error"));
             alert.setHeaderText(null);
-            alert.setContentText(errorMessages.get("noFile"));
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
     }
@@ -146,8 +147,9 @@ public class MainSceneController {
         } catch (DaoException e) {
             logger.error(e.getMessage());
         }
-        setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
         updateBoard();
+        setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
+
 
     }
 
@@ -194,6 +196,21 @@ public class MainSceneController {
         writeDB.setText(bundle.getString("writeDB"));
         readJdbc.setText(bundle.getString("readJDBC"));
         errorMessages.put("noDB", bundle.getString("noDB"));
+        errorMessages.put("enterTableName", bundle.getString("enterTableName"));
+        errorMessages.put("wrongScene", bundle.getString("wrongScene"));
+        errorMessages.put("FileReadError", bundle.getString("FileReadError"));
+        errorMessages.put("DbConnectError", bundle.getString("DbConnectError"));
+        errorMessages.put("BadStatement", bundle.getString("BadStatement"));
+        errorMessages.put("FileWriteError", bundle.getString("FileWriteError"));
+        errorMessages.put("BoardsNamesError", bundle.getString("BoardsNamesError"));
+        errorMessages.put("BadInsert", bundle.getString("BadInsert"));
+        errorMessages.put("BadBoardDims", bundle.getString("BadBoardDims"));
+        errorMessages.put("TransactionFailed", bundle.getString("TransactionFailed"));
+        errorMessages.put("enterDbName", bundle.getString("enterDbName"));
+        errorMessages.put("typeDBName", bundle.getString("typeDBName"));
+        errorMessages.put("dbName", bundle.getString("dbName"));
+        errorMessages.put("chooseBoard", bundle.getString("chooseBoard"));
+        errorMessages.put("boardSaved", bundle.getString("boardSaved"));
     }
 
     private void updateBoard() {
@@ -232,7 +249,7 @@ public class MainSceneController {
             stage.setScene(new Scene(root));
             updateUI(bundle);
         } catch (IOException e) {
-            logger.error("invalid or absence of file!");
+            throw new InvalidSceneFileException(errorMessages.get("wrongScene"), e);
         }
     }
 
@@ -307,15 +324,14 @@ public class MainSceneController {
         ChoiceDialog<String> chooseBoard;
         try {
             chooseBoard = new ChoiceDialog<String>("", dao.getBoardsNames());
-            chooseBoard.setTitle("Choose Board!");
-            chooseBoard.setHeaderText("Choose Board");
-            chooseBoard.setContentText("Choose Board");
+            chooseBoard.setTitle(errorMessages.get("chooseBoard"));
+            chooseBoard.setHeaderText(errorMessages.get("chooseBoard") + "!");
+            chooseBoard.setContentText(errorMessages.get("chooseBoard") + ":");
             chooseBoard.showAndWait();
             dbNameCurr = chooseBoard.getSelectedItem();
             dao = factory.getJdbcDao(dbNameCurr);
         } catch (DaoException e) {
             logger.error(e.getMessage());
-            System.out.println("dupa");
             return;
         }
         try {
@@ -338,15 +354,15 @@ public class MainSceneController {
 
     private String getDbName() {
         TextInputDialog dialog = new TextInputDialog("default");
-        dialog.setTitle("Wprowadź nazwę bazy danych");
-        dialog.setHeaderText("Podaj nazwę bazy danych:");
-        dialog.setContentText("Nazwa bazy:");
+        dialog.setTitle(errorMessages.get("enterDbName"));
+        dialog.setHeaderText(errorMessages.get("typeDBName"));
+        dialog.setContentText(errorMessages.get("dbName"));
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent() && !result.get().isBlank()) {
             return result.get();
         } else {
-            throw new IllegalArgumentException("Podaj nazwę bazy danych!");
+            throw new IllegalArgumentException(errorMessages.get("enterTableName"));
         }
     }
 
@@ -365,6 +381,7 @@ public class MainSceneController {
         } catch (DaoException e) {
             showError(e.getMessage());
         }
+        logger.info("{} {}", errorMessages.get("boardSaved"), dbNameCurr);
 
     }
 
@@ -377,7 +394,3 @@ public class MainSceneController {
     }
 
 }
-
-
-
-

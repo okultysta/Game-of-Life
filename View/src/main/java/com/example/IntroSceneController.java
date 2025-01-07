@@ -1,5 +1,6 @@
 package com.example;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,7 +54,7 @@ public class IntroSceneController {
 
 
     public IntroSceneController() {
-        System.out.println("IntroSceneController");
+        logger.info("IntroSceneController");
         boardInfo = new BoardInformation();
         errorMessages = new TreeMap<>();
         errorMessages.put("noBoardFilling", "");
@@ -75,12 +76,17 @@ public class IntroSceneController {
         Language[] languages = Language.values();
         langChooseIntro.getItems().addAll(languages);
         try {
-            Locale enLanguage = Locale.getDefault();
-            ResourceBundle bundle = ResourceBundle.getBundle("com.example.introLangData", enLanguage);
-            updateUI(bundle);
+            try {
+                Locale enLanguage = Locale.getDefault();
+                ResourceBundle bundle = ResourceBundle.getBundle("com.example.introLangData", enLanguage);
+                updateUI(bundle);
 
-        } catch (MissingResourceException e) {
-            logger.error(e.getMessage());
+            } catch (MissingResourceException e) {
+                throw new InvalidResourcesException("badResources", e);
+            }
+        } catch(InvalidResourcesException e) {
+            showAlert(errorMessages.get(e.getMessage()), false);
+            System.exit(1);
         }
     }
 
@@ -90,11 +96,14 @@ public class IntroSceneController {
             return;
         }
         try {
-            Integer.parseInt(xvalue.getText());
-            Integer.parseInt(yvalue.getText());
-        } catch (NumberFormatException apud) {
+            try {
+                Integer.parseInt(xvalue.getText());
+                Integer.parseInt(yvalue.getText());
+            } catch (NumberFormatException apud) {
+                throw new NotANumberException(errorMessages.get("wrongFormat"), apud);
+            }
+        } catch (NotANumberException e) {
             showAlert(errorMessages.get("wrongFormat"), true);
-            return;
         }
         if (Integer.parseInt(xvalue.getText()) <= 0 || Integer.parseInt(yvalue.getText()) <= 0) {
             showAlert(errorMessages.get("wrongFormat"), true);
@@ -122,6 +131,7 @@ public class IntroSceneController {
             Scene mainScene = new Scene(mainRoot);
             MainSceneController mainController = loader.getController();
             stage.setScene(mainScene);
+            stage.setTitle(errorMessages.get("windowTitleMain"));
             mainController.initializeBoard(boardInfo);
             stage.show();
         } catch (IOException ioe) {
@@ -176,6 +186,10 @@ public class IntroSceneController {
 
     private void updateUI(ResourceBundle bundle) {
 
+         Platform.runLater(() -> {
+           Stage stage = (Stage) startButton.getScene().getWindow();
+           stage.setTitle(bundle.getString("windowTitle"));
+        });
         title.setText(bundle.getString("title"));
         dimChoose.setText(bundle.getString("dimChoose"));
         chooseFillAmountTitle.setText(bundle.getString("chooseFillAmountTitle"));
@@ -189,5 +203,8 @@ public class IntroSceneController {
         errorMessages.put("noLanguage", bundle.getString("noLanguage"));
         errorMessages.put("wrongFormat", bundle.getString("wrongFormat"));
         errorMessages.put("error", bundle.getString("error"));
+        errorMessages.put("windowTitle", bundle.getString("windowTitle"));
+        errorMessages.put("windowTitleMain", bundle.getString("windowTitleMain"));
+        errorMessages.put("badResources", bundle.getString("badResources"));
     }
 }
