@@ -104,5 +104,7 @@ class GameOfLifeBoardTest {
         GameOfLifeBoard board2 = board.clone();
         assertEquals(board, board2);
         assertNotSame(board, board2);
+        board.doSimulationStep();
+        assertNotEquals(board, board2);
     }
 }

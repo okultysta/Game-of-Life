@@ -35,11 +35,17 @@ public class JdbcGameOfLifeBoardDaoTest {
             logger.error(e.getMessage());
         }
     }
+    @Test
+    public void closeTest() throws Exception {
+        JdbcGameOfLifeBoardDao writer =  new JdbcGameOfLifeBoardDao();
+        writer.close();
+        assertTrue(writer.isClosed());
+    }
 
     @Test
     public void testTransactionRollbackOnError() {
         GameOfLifeBoard invalidBoard = null;
-        Exception exception = assertThrows(NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             try (JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao("invalidBoard")) {
                 dao.write(invalidBoard);
             }
@@ -49,11 +55,33 @@ public class JdbcGameOfLifeBoardDaoTest {
 
     @Test
     public void testAutoCloseableResources() {
+        JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao("testBoard");
         assertDoesNotThrow(() -> {
-            try (JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao("testBoard")) {
-                dao.write(new GameOfLifeBoard(4, 3, gameOfLifeSimulator));
+            try (JdbcGameOfLifeBoardDao resource = dao) {
+                resource.write(new GameOfLifeBoard(4, 3, gameOfLifeSimulator));
             }
         });
+        assertTrue(dao.isClosed());
+    }
+
+    @Test
+    public void testResourcesClosedOnException() {
+        JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao("testBoard");
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            try (JdbcGameOfLifeBoardDao resource = dao) {
+                throw new RuntimeException("wyjątek");
+            }
+        });
+
+        assertEquals("wyjątek", exception.getMessage());
+        assertTrue(dao.isClosed());
+    }
+
+    @Test
+    public void testGetBoardNames() throws DaoException {
+        JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao();
+        assertDoesNotThrow(() -> {reader.getBoardsNames();});
     }
 
 

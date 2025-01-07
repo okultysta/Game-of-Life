@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable {
     private final String url = "jdbc:postgresql://localhost:5432/GameOfLife";
     private final String boardName;
+    boolean closed = false;
 
     public JdbcGameOfLifeBoardDao() {
         this.boardName = "default";
@@ -156,7 +157,11 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
 
     @Override
     public void close() throws Exception {
+        closed = true;
+    }
 
+    public boolean isClosed() {
+        return closed;
     }
 
     public ArrayList<String> getBoardsNames() throws DaoException {
