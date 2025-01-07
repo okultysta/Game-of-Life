@@ -83,7 +83,7 @@ public class GameOfLifeCell implements Serializable, Comparable<GameOfLifeCell>,
 
     @Override
     public String toString() {
-        ArrayList<Boolean> local = new ArrayList<>();
+        //ArrayList<Boolean> local = new ArrayList<>();
         /*
         for (GameOfLifeCell cell : listOfNeighbors) {
             local.add(cell.isAlive());
