@@ -18,16 +18,9 @@ public class JdbcGameOfLifeBoardDaoTest {
     public void JDBCWriteReadTest() {
         GameOfLifeSimulator gameOfLifeSimulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board = new GameOfLifeBoard(4, 3, gameOfLifeSimulator);
-        JdbcGameOfLifeBoardDao writer =  new JdbcGameOfLifeBoardDao();
-        JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao();
-        try {
+        try (JdbcGameOfLifeBoardDao writer =  new JdbcGameOfLifeBoardDao();
+        JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao()) {
             writer.write(board);
-
-        }
-        catch (DaoException e) {
-            logger.error(e.getMessage());
-        }
-        try {
             GameOfLifeBoard boardRead = writer.read();
             assertEquals(board, boardRead);
             assertNotSame(board, boardRead);
@@ -80,8 +73,11 @@ public class JdbcGameOfLifeBoardDaoTest {
 
     @Test
     public void testGetBoardNames() throws DaoException {
-        JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao();
-        assertDoesNotThrow(() -> {reader.getBoardsNames();});
+        try (JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao()) {
+            assertDoesNotThrow(() -> {
+                reader.getBoardsNames();
+            });
+        }
     }
 
 
