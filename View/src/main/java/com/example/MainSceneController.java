@@ -70,7 +70,6 @@ public class MainSceneController {
 
         } catch (MissingResourceException e) {
             logger.error("no resource!");
-            e.printStackTrace();
         }
         Language[] languages = Language.values();
         langChooseMain.getItems().addAll(languages);
