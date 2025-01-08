@@ -101,10 +101,14 @@ class GameOfLifeBoardTest {
     public void cloneTest() {
         PlainGameOfLifeSimulator simulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board = new GameOfLifeBoard(3, 3, simulator);
-        GameOfLifeBoard board2 = board.clone();
-        assertEquals(board, board2);
-        assertNotSame(board, board2);
-        board.doSimulationStep();
-        assertNotEquals(board, board2);
+        try {
+            GameOfLifeBoard board2 = board.clone();
+            assertEquals(board, board2);
+            assertNotSame(board, board2);
+            board.doSimulationStep();
+            assertNotEquals(board, board2);
+        } catch(BadCloneClassException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

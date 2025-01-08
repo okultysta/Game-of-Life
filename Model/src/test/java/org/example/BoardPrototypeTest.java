@@ -14,7 +14,7 @@ public class BoardPrototypeTest {
             prototype = new BoardPrototype(board);
             assertNotSame(board, prototype);
             assertNotSame(board, prototype.getInstance());
-        } catch (BadCloneClass e) {
+        } catch (BadCloneClassException e) {
             throw new RuntimeException(e);
         }
 

@@ -120,7 +120,7 @@ public class GameOfLifeCellTest {
         GameOfLifeCell neighbourAlive = new GameOfLifeCell(true);
         GameOfLifeCell neighbourDead = new GameOfLifeCell(false);
 
-        assertThrows(NullPointerException.class, () -> cellTrue1.compareTo(null));
+        assertThrows(NothingToCompareException.class, () -> cellTrue1.compareTo(null));
 
         cellTrue1.addNeighbor(neighbourAlive);
         cellTrue1.addNeighbor(neighbourAlive);
