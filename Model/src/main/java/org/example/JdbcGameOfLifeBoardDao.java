@@ -19,12 +19,14 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
     @Override
     public GameOfLifeBoard read() throws DaoException {
         try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
+
             try (PreparedStatement checkBoardStatement = connection.prepareStatement(
                     "SELECT COUNT(*) FROM board WHERE name = ?")) {
                 checkBoardStatement.setString(1, boardName);
-                ResultSet resultSet = checkBoardStatement.executeQuery();
-                if (resultSet.next() && resultSet.getInt(1) == 0) {
-                    throw new ObjectNotFoundException("NosuchBoard", null);
+                try (ResultSet resultSet = checkBoardStatement.executeQuery()) {
+                    if (resultSet.next() && resultSet.getInt(1) == 0) {
+                        throw new ObjectNotFoundException("NosuchBoard", null);
+                    }
                 }
             } catch (SQLException e) {
                 throw new DbReadWriteException("BadStatement", e);
@@ -36,10 +38,11 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
                     "SELECT MAX(x) AS max_x, MAX(y) AS max_y FROM cell "
                             + "JOIN board ON cell.board_id = board.board_id WHERE board.name = ?")) {
                 dimensionStatement.setString(1, boardName);
-                ResultSet dimensionResultSet = dimensionStatement.executeQuery();
-                if (dimensionResultSet.next()) {
-                    maxX = dimensionResultSet.getInt("max_x");
-                    maxY = dimensionResultSet.getInt("max_y");
+                try (ResultSet dimensionResultSet = dimensionStatement.executeQuery()) {
+                    if (dimensionResultSet.next()) {
+                        maxX = dimensionResultSet.getInt("max_x");
+                        maxY = dimensionResultSet.getInt("max_y");
+                    }
                 }
             }
 
@@ -59,13 +62,14 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
             try (PreparedStatement cellStatement = connection.prepareStatement(
                     "SELECT * FROM cell JOIN board ON cell.board_id = board.board_id WHERE board.name = ?")) {
                 cellStatement.setString(1, boardName);
-                ResultSet cellResultSet = cellStatement.executeQuery();
-                while (cellResultSet.next()) {
-                    boolean state = cellResultSet.getBoolean("state");
-                    int x = cellResultSet.getInt("x");
-                    int y = cellResultSet.getInt("y");
-                    if (x >= 0 && x < width && y >= 0 && y < height) {
-                        boardArray[y][x].setCell(state);
+                try (ResultSet cellResultSet = cellStatement.executeQuery()) {
+                    while (cellResultSet.next()) {
+                        boolean state = cellResultSet.getBoolean("state");
+                        int x = cellResultSet.getInt("x");
+                        int y = cellResultSet.getInt("y");
+                        if (x >= 0 && x < width && y >= 0 && y < height) {
+                            boardArray[y][x].setCell(state);
+                        }
                     }
                 }
             }
@@ -84,12 +88,9 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
             try {
                 try (Statement statement = connection.createStatement()) {
                     statement.execute("CREATE TABLE IF NOT EXISTS board ("
-                            +
-                            "board_id SERIAL PRIMARY KEY, "
-                            +
-                            "name VARCHAR(100) NOT NULL"
-                            +
-                            ");");
+                            + "board_id SERIAL PRIMARY KEY, "
+                            + "name VARCHAR(100) NOT NULL"
+                            + ");");
 
                     statement.execute("CREATE TABLE IF NOT EXISTS cell ("
                             + "board_id INTEGER, "
@@ -119,11 +120,12 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
                         "INSERT INTO board (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
                     boardStatement.setString(1, boardName);
                     boardStatement.executeUpdate();
-                    ResultSet generatedKeys = boardStatement.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        boardId = generatedKeys.getInt(1);
-                    } else {
-                        throw new DbReadWriteException("BadInsert", null);
+                    try (ResultSet generatedKeys = boardStatement.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            boardId = generatedKeys.getInt(1);
+                        } else {
+                            throw new DbReadWriteException("BadInsert", null);
+                        }
                     }
                 }
 
@@ -160,27 +162,22 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         closed = true;
     }
 
-    public boolean isClosed() {
-        return closed;
-    }
 
     public ArrayList<String> getBoardsNames() throws DaoException {
         ArrayList<String> boardsNames = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
-            try (Statement statement = connection.createStatement()) {
-                statement.execute("SELECT name FROM board");
-                ResultSet resultSet = statement.getResultSet();
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery("SELECT name FROM board")) {
                 if (!resultSet.next()) {
                     throw new ObjectNotFoundException("NoBoards", null);
                 }
-                while (resultSet.next()) {
+                do {
                     boardsNames.add(resultSet.getString("name"));
-                }
+                } while (resultSet.next());
             }
         } catch (SQLException e) {
             throw new DaoException("BoardsNamesError", e);
         }
         return boardsNames;
     }
-
 }
