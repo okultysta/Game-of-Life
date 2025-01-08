@@ -167,7 +167,7 @@ public class GameOfLifeBoard implements Serializable, Cloneable {
 
 
     @Override
-    public GameOfLifeBoard clone() throws BadCloneClass {
+    public GameOfLifeBoard clone() throws BadCloneClassException {
         try {
             GameOfLifeBoard clone = (GameOfLifeBoard) super.clone();
             clone.board = new GameOfLifeCell[board.length][board[0].length];
@@ -184,10 +184,10 @@ public class GameOfLifeBoard implements Serializable, Cloneable {
             return clone;
         } catch (CloneNotSupportedException e) {
             try {
-                throw new BadCloneClass("notCloneable", e);
+                throw new BadCloneClassException("notCloneable", e);
 
-            } catch (BadCloneClass ex) {
-                throw new BadCloneClass("notCloneable", e);
+            } catch (BadCloneClassException ex) {
+                throw new BadCloneClassException("notCloneable", e);
             }
         }
     }

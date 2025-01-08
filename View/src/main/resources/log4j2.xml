@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <!-- Appender do konsoli -->
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</Pattern>
+            </PatternLayout>
+        </Console>
+
+        <!-- Appender do zapisu logów do pliku -->
+        <File name="File" fileName="logs/application.log">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <!-- Konfiguracja logowania -->
+    <Loggers>
+        <!-- Logowanie na poziomie DEBUG dla wszystkich loggerów -->
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+
+        <!-- Logger dla klasy 'com.example' -->
+        <Logger name="com.example" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Logger>
+    </Loggers>
+</Configuration>

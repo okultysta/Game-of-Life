@@ -84,7 +84,7 @@ public class IntroSceneController {
             } catch (MissingResourceException e) {
                 throw new InvalidResourcesException("badResources", e);
             }
-        } catch(InvalidResourcesException e) {
+        } catch (InvalidResourcesException e) {
             showAlert(errorMessages.get(e.getMessage()), false);
             System.exit(1);
         }
@@ -186,9 +186,9 @@ public class IntroSceneController {
 
     private void updateUI(ResourceBundle bundle) {
 
-         Platform.runLater(() -> {
-           Stage stage = (Stage) startButton.getScene().getWindow();
-           stage.setTitle(bundle.getString("windowTitle"));
+        Platform.runLater(() -> {
+            Stage stage = (Stage) startButton.getScene().getWindow();
+            stage.setTitle(bundle.getString("windowTitle"));
         });
         title.setText(bundle.getString("title"));
         dimChoose.setText(bundle.getString("dimChoose"));

@@ -21,7 +21,7 @@ public class PlainGameOfLifeSimulator implements GameOfLifeSimulator, Serializab
         }
     }
 
-
+    /*
     @Override
     public PlainGameOfLifeSimulator clone() {
         try {
@@ -30,4 +30,6 @@ public class PlainGameOfLifeSimulator implements GameOfLifeSimulator, Serializab
             throw new AssertionError();
         }
     }
+    */
+
 }

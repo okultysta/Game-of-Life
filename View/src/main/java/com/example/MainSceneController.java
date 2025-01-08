@@ -1,6 +1,6 @@
 package com.example;
 
-import javafx.application.Platform;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.adapter.*;
 import javafx.event.ActionEvent;
@@ -324,41 +324,38 @@ public class MainSceneController {
 
 
     public void readJdbc(ActionEvent actionEvent) {
-        String dbNameCurr;
-        JdbcGameOfLifeBoardDao dao = factory.getJdbcDao();
-        ChoiceDialog<String> chooseBoard;
-        try {
-            chooseBoard = new ChoiceDialog<String>("", dao.getBoardsNames());
+        String dbNameCurr = "";
+        try (JdbcGameOfLifeBoardDao dao = factory.getJdbcDao()) {
+            ChoiceDialog<String> chooseBoard = new ChoiceDialog<>("", dao.getBoardsNames());
             chooseBoard.setTitle(errorMessages.get("chooseBoard"));
             chooseBoard.setHeaderText(errorMessages.get("chooseBoard") + "!");
             chooseBoard.setContentText(errorMessages.get("chooseBoard") + ":");
             chooseBoard.showAndWait();
             dbNameCurr = chooseBoard.getSelectedItem();
-            dao = factory.getJdbcDao(dbNameCurr);
-        } catch (DaoException e) {
-            logger.error(e.getMessage());
-            showError(errorMessages.get(e.getMessage()));
-            return;
-        }
-        try {
-            gameOfLifeBoard = dao.read();
-            setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard()[0].length);
-            updateBoard();
-        } catch (IllegalArgumentException e) {
+
+            if (dbNameCurr.isEmpty()) {
+                throw new DbReadWriteException(errorMessages.get("noDB"), null);
+            }
+
+            try (JdbcGameOfLifeBoardDao selectedDao = factory.getJdbcDao(dbNameCurr)) {
+                gameOfLifeBoard = selectedDao.read();
+                setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard()[0].length);
+                updateBoard();
+            }
+        } catch (DbReadWriteException e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(errorMessages.get("error"));
             alert.setHeaderText(null);
-            alert.setContentText(errorMessages.get("noDB"));
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
-            throw new RuntimeException(e);
-
+            logger.error("Error reading board: {}", e.getMessage());
         } catch (DaoException e) {
             showError(errorMessages.get(e.getMessage()));
-            logger.error(errorMessages.get(e.getMessage()));
+            logger.error("DAO exception: {}", e.getMessage());
         }
     }
 
-    private String getDbName() {
+    private String getDbName() throws ObjectNotFoundException {
         TextInputDialog dialog = new TextInputDialog("default");
         dialog.setTitle(errorMessages.get("enterDbName"));
         dialog.setHeaderText(errorMessages.get("typeDBName"));
@@ -368,7 +365,7 @@ public class MainSceneController {
         if (result.isPresent() && !result.get().isBlank()) {
             return result.get();
         } else {
-            throw new IllegalArgumentException(errorMessages.get("enterTableName"));
+            throw new ObjectNotFoundException(errorMessages.get("enterTableName"), null);
         }
     }
 
@@ -377,19 +374,22 @@ public class MainSceneController {
         String dbNameCurr = "";
         try {
             dbNameCurr = getDbName();
-        } catch (IllegalArgumentException e) {
+            if (dbNameCurr.isEmpty()) {
+                throw new IllegalArgumentException(errorMessages.get("noBoardName"));
+            }
+        } catch (ObjectNotFoundException e) {
             showError(e.getMessage());
             logger.warn(e.getMessage());
+            return;
         }
-        Dao<GameOfLifeBoard> dao = factory.getJdbcDao(dbNameCurr);
-        try {
+
+        try (JdbcGameOfLifeBoardDao dao = factory.getJdbcDao(dbNameCurr)) {
             dao.write(gameOfLifeBoard);
+            logger.info("{} {}", errorMessages.get("boardSaved"), dbNameCurr);
         } catch (DaoException e) {
             showError(errorMessages.get(e.getMessage()));
-            logger.error(errorMessages.get(e.getMessage()));
+            logger.error(e.getMessage());
         }
-        logger.info("{} {}", errorMessages.get("boardSaved"), dbNameCurr);
-
     }
 
     public void showError(String message) {
