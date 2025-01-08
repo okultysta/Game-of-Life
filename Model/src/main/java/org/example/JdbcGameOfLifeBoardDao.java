@@ -162,22 +162,28 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         closed = true;
     }
 
+    public boolean isClosed() {
+        return closed;
+    }
 
     public ArrayList<String> getBoardsNames() throws DaoException {
         ArrayList<String> boardsNames = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
             try (Statement statement = connection.createStatement();
                  ResultSet resultSet = statement.executeQuery("SELECT name FROM board")) {
-                if (!resultSet.next()) {
+
+                while (resultSet.next()) {
+                    boardsNames.add(resultSet.getString("name"));
+                }
+
+                if (boardsNames.isEmpty()) {
                     throw new ObjectNotFoundException("NoBoards", null);
                 }
-                do {
-                    boardsNames.add(resultSet.getString("name"));
-                } while (resultSet.next());
             }
         } catch (SQLException e) {
             throw new DaoException("BoardsNamesError", e);
         }
         return boardsNames;
     }
+
 }

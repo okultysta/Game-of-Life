@@ -1,6 +1,6 @@
 package com.example;
 
-import javafx.application.Platform;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.adapter.*;
 import javafx.event.ActionEvent;
@@ -371,10 +371,10 @@ public class MainSceneController {
 
 
     public void writeDB(ActionEvent actionEvent) {
-        String dbNameCurr="";
+        String dbNameCurr = "";
         try {
             dbNameCurr = getDbName();
-            if ( dbNameCurr.isEmpty()) {
+            if (dbNameCurr.isEmpty()) {
                 throw new IllegalArgumentException(errorMessages.get("noBoardName"));
             }
         } catch (ObjectNotFoundException e) {
