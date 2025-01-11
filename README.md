@@ -17,11 +17,12 @@ DB: PostgreSQL 17
 
 How to run:
 Elements needed:
-POstgreSQL 17.x
+POstgreSQL 17.x (default user is "postgres", def. password is "")
 Maven 3.x (preferably 3.9)
 
 to build the whole project with reports in th main directory execute the following command:
 mvn clean install site
+
 to run the app:
 cd ./View
 mvn javafx:run
