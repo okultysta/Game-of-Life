@@ -1,6 +1,6 @@
-This is the project I have been working on  with my college mate (https://github.com/okultysta) during the Componnent Programming course held during winter semester 2024/2025.
+This is the project I have been working on  with my college mate (https://github.com/okultysta) for Component Programming course held during winter semester 2024/2025.
 
-This JavaFX application implements the famous simulation "Game of Life" in a form of interactive simulation.
+This JavaFX application implements the famous simulation "Game of Life" in a form of desktop application.
 
 Features:
 - Board with choosable dimensions with cells interactive on-click
@@ -26,6 +26,13 @@ mvn clean install site
 to run the app:
 cd ./View
 mvn javafx:run
+
+In-dev:
+-support for Docker containers
+-lesser changes in controller components
+-changes in DAO component (f. e. introducing the deletion of the specific board, bugfixes in saving to file) 
+
+
 
 
 
