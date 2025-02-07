@@ -3,14 +3,18 @@ package org.example;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.example.exceptions.NothingToCompareException;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 
 public class GameOfLifeCell implements Serializable, Comparable<GameOfLifeCell>, Cloneable {
+    @Serial
+    private static final long serialVersionUID = 6501629135049586390L;
     private boolean alive;
-    private boolean nextState;
+    private transient boolean nextState;
     private ArrayList<GameOfLifeCell> listOfNeighbors;
 
     public GameOfLifeCell(boolean alive) {

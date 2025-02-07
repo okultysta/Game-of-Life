@@ -1,10 +1,12 @@
 package org.example;
 
+
+
 import java.sql.*;
 import java.util.ArrayList;
 
 public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable {
-    private final String url = "jdbc:postgresql://localhost:5432/GameOfLife";
+    private final String url = "jdbc:postgresql://localhost:5455/GameOfLife";
     private final String boardName;
     boolean closed = false;
 
@@ -18,7 +20,7 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
 
     @Override
     public GameOfLifeBoard read() throws DaoException {
-        try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
+        try (Connection connection = DriverManager.getConnection(url, "user", "password")) {
 
             try (PreparedStatement checkBoardStatement = connection.prepareStatement(
                     "SELECT COUNT(*) FROM board WHERE name = ?")) {

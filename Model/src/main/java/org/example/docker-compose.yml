@@ -1,0 +1,20 @@
+version: '3'
+services:
+  db:
+    image : postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: GameOfLife
+    ports:
+      - "5455:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - GameOfLife-network
+volumes:
+    pg_data:
+
+networks:
+  GameOfLife-network:
+    driver: bridge

@@ -4,7 +4,9 @@ package org.example;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.example.exceptions.BadCloneClassException;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.Random;
 
 
 public class GameOfLifeBoard implements Serializable, Cloneable {
+    @Serial
+    private static final long serialVersionUID = -7898875135169078527L;  // Wartość, która była zapisana w pliku
     //table, which serves as game board
     private GameOfLifeCell[][] board;
     private GameOfLifeSimulator simulator;
@@ -107,25 +111,31 @@ public class GameOfLifeBoard implements Serializable, Cloneable {
         return columns.get(x);
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-
         if (!(o instanceof GameOfLifeBoard that)) {
             return false;
         }
-
-        return new EqualsBuilder().append(board, that.board).append(columns, that.columns)
-                .append(rows, that.rows).isEquals();
+        return new EqualsBuilder()
+                .append(columns, that.columns)
+                .append(rows, that.rows)
+                .isEquals() && Arrays.deepEquals(board, that.board);
     }
+
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(Arrays.deepHashCode(board))
-                .append(columns).append(rows).toHashCode();
+        return new HashCodeBuilder(17, 37)
+                .append(rows)
+                .append(columns)
+                .append(Arrays.deepHashCode(board))
+                .toHashCode();
     }
+
 
     @Override
     public String toString() {

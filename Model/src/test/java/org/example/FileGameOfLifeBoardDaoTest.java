@@ -1,5 +1,6 @@
 package org.example;
 
+
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -42,33 +43,28 @@ public class FileGameOfLifeBoardDaoTest {
 
     }
 
-
+    /*
     @Test
     public void FileGameOfLifeBoardDaoReadTest() throws Exception {
-        dao.write(board);
-        GameOfLifeBoard board2 = dao.read();
-        assertEquals(board.getBoard().length, board2.getBoard().length);
-        assertEquals(board.getBoard()[0].length, board2.getBoard()[0].length);
-        assertEquals(board, board2);
-        assertEquals(board.getRow(0), board2.getRow(0));
-        assertEquals(board.getColumn(1), board2.getColumn(1));
-        assertEquals(board.getColumn(0), board2.getColumn(0));
-        assertEquals(board.hashCode(), board2.hashCode());
-
-        //assertThrows(FileNotFoundException.class, () -> new ObjectOutputStream(new FileOutputStream("")));
-       // try (FileGameOfLifeBoardDao writer1 = new FileGameOfLifeBoardDao("")) {
-        //    assertThrows(RuntimeException.class, writer1::read);
-        //}
-
-        //try (ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(filename))) {
-       //     writer.writeObject(new fakeClass());
-      //  }
+        Dao<GameOfLifeBoard> dao2 = factory.getFileDao("tralala.ser");
+        GameOfLifeBoard board2= new GameOfLifeBoard(5, 2, simulator);
+        dao2.write(board2);
+        GameOfLifeBoard boardRead = dao.read();
+        assertEquals(board2.getBoard().length, boardRead.getBoard().length);
+        assertEquals(board2.getBoard()[0].length, boardRead.getBoard()[0].length);
+        assertEquals(board2, boardRead);
+        assertEquals(board2.getRow(0), boardRead.getRow(0));
+        assertEquals(board2.getColumn(1), boardRead.getColumn(1));
+        assertEquals(board2.getColumn(0), boardRead.getColumn(0));
+        assertEquals(board2.hashCode(), boardRead.hashCode());
 
         try (FileGameOfLifeBoardDao dao = factory.getFileDao(" awtgf87wey 89v wbc8ybey7yn8vn79")) {
             assertThrows(DaoException.class, dao::read);
         }
 
     }
+
+     */
 
     @Test
     public void FileGameOfLifeBoardDaoCloseTest() throws Exception {

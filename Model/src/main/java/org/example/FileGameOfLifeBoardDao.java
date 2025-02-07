@@ -1,10 +1,9 @@
 package org.example;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable {
@@ -12,6 +11,10 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
 
     public FileGameOfLifeBoardDao(String filename) {
         this.filename = filename;
+    }
+
+    public FileGameOfLifeBoardDao() {
+        this.filename = "default.ser";
     }
 
     public GameOfLifeBoard read() throws DaoException {
@@ -30,6 +33,21 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         } catch (IOException e) {
             throw new ReadWriteFileException("FileWriteError", e);
         }
+    }
+
+    @Override
+    public List<String> getBoardsNames() throws DaoException {
+        File directoryPath = new File("./");
+        File[] files = directoryPath.listFiles();
+        List<String> boardsNames = new ArrayList<>();
+        try {
+            for (File file : files) {
+                boardsNames.add(file.getName());
+            }
+        } catch (NullPointerException e) {
+            throw new DaoException("FileReadException", e);
+        }
+        return boardsNames;
     }
 
     @Override

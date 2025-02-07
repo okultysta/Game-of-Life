@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.exceptions.BadCloneClassException;
+
 public class BoardPrototype {
     private GameOfLifeBoard board;
 

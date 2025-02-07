@@ -18,6 +18,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.*;
+import org.example.DaoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,9 +103,6 @@ public class MainSceneController {
         mainBoard.getChildren().clear();
         gameOfLifeBoard = new GameOfLifeBoard(x, y, new PlainGameOfLifeSimulator(),
                 boardInformation.getFillPercentage());
-        //this.originalBorad = new BoardPrototype(gameOfLifeBoard);
-        //gameOfLifeBoardFactory = new GameOfLifeBoardFactory(gameOfLifeBoard);
-        //JavaBeanObjectPropertyBuilder colorPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
         setCellsAndBindings(x, y);
     }
 
@@ -124,11 +122,20 @@ public class MainSceneController {
 
 
     public void saveToFile(ActionEvent actionEvent) {
+        String fileNameCurr = "";
         try {
-            FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
+            fileNameCurr = getBoardName();
+            if (fileNameCurr.isEmpty()) {
+                throw new IllegalArgumentException(errorMessages.get("noBoardName"));
+            }
+        } catch (ObjectNotFoundException e) {
+            showError(e.getMessage());
+            logger.warn(e.getMessage());
+            return;
+        }
+        try {
+            Dao<GameOfLifeBoard> saver = factory.getFileDao(fileNameCurr);
             saver.write(gameOfLifeBoard);
-            //FileGameOfLifeBoardDao saver2 = factory.getFileDao("OriginalFile.ser");
-
 
         } catch (DaoException e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -140,15 +147,56 @@ public class MainSceneController {
     }
 
     public void readFromFile(ActionEvent actionEvent) {
-        FileGameOfLifeBoardDao saver = factory.getFileDao("testFile.ser");
-        try {
-            gameOfLifeBoard = saver.read();
+        String fileNameCurr = "";
+        try (Dao<GameOfLifeBoard> dao = factory.getFileDao()) {
+            ChoiceDialog<String> chooseBoard = new ChoiceDialog<>("", dao.getBoardsNames());
+            chooseBoard.setTitle(errorMessages.get("chooseBoard"));
+            chooseBoard.setHeaderText(errorMessages.get("chooseBoard") + "!");
+            chooseBoard.setContentText(errorMessages.get("chooseBoard") + ":");
+            chooseBoard.showAndWait();
+            fileNameCurr = chooseBoard.getSelectedItem();
+
+            if (fileNameCurr.isEmpty()) {
+                throw new FileException(errorMessages.get("FileReadError"), null);
+            }
+            try (Dao<GameOfLifeBoard> selectedDao = factory.getFileDao(fileNameCurr)) {
+                gameOfLifeBoard = selectedDao.read();
+                setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard()[0].length);
+                updateBoard();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle(errorMessages.get("error"));
+                alert.setHeaderText(null);
+                alert.setContentText(errorMessages.get("FileReadError"));
+                alert.showAndWait();
+                logger.error("Error reading board: {}", errorMessages.get("FileReadError"));
+            }
+        } catch (FileException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(errorMessages.get("error"));
+            alert.setHeaderText(null);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            logger.error("Error reading board: {}", e.getMessage());
         } catch (DaoException e) {
+            showError(errorMessages.get(e.getMessage()));
+            logger.error("DAO exception: {}", e.getMessage());
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(errorMessages.get("error"));
+            alert.setHeaderText(null);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            logger.error("Error: {}", e.getMessage());
+        }
+        try (Dao<GameOfLifeBoard> saver = factory.getFileDao(fileNameCurr)) {
+            gameOfLifeBoard = saver.read();
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        updateBoard();
-        setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
 
+        //setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
+        updateBoard();
 
     }
 
@@ -211,6 +259,7 @@ public class MainSceneController {
         errorMessages.put("chooseBoard", bundle.getString("chooseBoard"));
         errorMessages.put("boardSaved", bundle.getString("boardSaved"));
         errorMessages.put("wrongInit", bundle.getString("wrongInit"));
+        errorMessages.put("badBoardsNames", bundle.getString("badBoardsNames"));
     }
 
     private void updateBoard() {
@@ -270,15 +319,10 @@ public class MainSceneController {
                 mainBoard.add(cell, i, j);
                 try {
 
-                    //JavaBeanObjectProperty colorProperty = colorPropertyBuilder.bean(cell).name("fill").build();
-                    //SimpleStringProperty colorStringProperty = new SimpleStringProperty(bridge[i][j]);
+
                     JavaBeanBooleanProperty aliveProperty = propertyBuilder
                             .bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
                             .getter("isAlive").setter("setCell").build();
-                    //JavaBeanBooleanProperty aliveHelperProperty =
-                    // propertyBuilder.bean(gameOfLifeBoard.getBoard()[i][j]).name("alive")
-                    // .getter("isAlive").setter("setCell").build();
-                    //StringProperty aliveStringProperty = new SimpleStringProperty();
                     aliveProperty.bind(Bindings.when(cell.fillProperty().isEqualTo(Color.GREEN))
                             .then(true)
                             .otherwise(false));
@@ -289,17 +333,6 @@ public class MainSceneController {
                             cell.setFill(Color.RED);
                         }
                     });
-                    //Bindings.bindBidirectional(aliveStringProperty, aliveProperty, booleanToStringConverter);
-                    //Bindings.bindBidirectional(aliveStringProperty, cell.fillProperty(), paintToStringConverter);
-                    //colorStringProperty.bindBidirectional(aliveProperty, new CustomBooleanStringConverter());
-                    //colorStringProperty.bindBidirectional(cell.fillProperty(), new CustomStringColorConverter());
-                    //BooleanProperty aliveTempProperty = new SimpleBooleanProperty();
-                    //ObjectProperty<Paint> fillAdapter = new SimpleObjectProperty<>();
-
-                    //fillAdapter.bindBidirectional(cell.fillProperty());
-
-                    //aliveProperty.bindBidirectional((Property<Boolean>) fillAdapter.isEqualTo(Color.GREEN));
-
                     aliveProperty.addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
                             cell.setFill(Color.GREEN);
@@ -354,7 +387,7 @@ public class MainSceneController {
         }
     }
 
-    private String getDbName() throws ObjectNotFoundException {
+    private String getBoardName() throws ObjectNotFoundException {
         TextInputDialog dialog = new TextInputDialog("default");
         dialog.setTitle(errorMessages.get("enterDbName"));
         dialog.setHeaderText(errorMessages.get("typeDBName"));
@@ -372,7 +405,7 @@ public class MainSceneController {
     public void writeDB(ActionEvent actionEvent) {
         String dbNameCurr = "";
         try {
-            dbNameCurr = getDbName();
+            dbNameCurr = getBoardName();
             if (dbNameCurr.isEmpty()) {
                 throw new IllegalArgumentException(errorMessages.get("noBoardName"));
             }
@@ -382,12 +415,16 @@ public class MainSceneController {
             return;
         }
 
-        try (JdbcGameOfLifeBoardDao dao = factory.getJdbcDao(dbNameCurr)) {
+        try (Dao<GameOfLifeBoard> dao = factory.getJdbcDao(dbNameCurr)) {
             dao.write(gameOfLifeBoard);
             logger.info("{} {}", errorMessages.get("boardSaved"), dbNameCurr);
         } catch (DaoException e) {
             showError(errorMessages.get(e.getMessage()));
             logger.error(e.getMessage());
+        } catch (Exception e) {
+            showError(errorMessages.get("badBoardsNames"));
+            logger.error(errorMessages.get("badBoardsNames"));
+
         }
     }
 
