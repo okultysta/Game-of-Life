@@ -6,7 +6,6 @@ Features:
 - Board with choosable dimensions with cells interactive on-click (changeable state (alive-dead) of the cell)
 - three fillment levels
 - saving/reading/deleting the board to/from file and database
-- 
 - two language versions : English and Polish
 - Docker support for database
 
