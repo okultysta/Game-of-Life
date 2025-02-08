@@ -3,10 +3,12 @@ This is the project I have been working on  with my college mate (https://github
 This JavaFX application implements the famous simulation "Game of Life" in a form of desktop application.
 
 Features:
-- Board with choosable dimensions with cells interactive on-click
+- Board with choosable dimensions with cells interactive on-click (changeable state (alive-dead) of the cell)
 - three fillment levels
-- Saving/Reading the board to/from file and database
+- saving/reading/deleting the board to/from file and database
+- 
 - two language versions : English and Polish
+- Docker support for database
 
 Technological stack:
 
@@ -17,20 +19,24 @@ DB: PostgreSQL 17
 
 How to run:
 Elements needed:
-POstgreSQL 17.x (default user is "postgres", def. password is "")
+Docker installed on local machine (prefferably with WSL)
 Maven 3.x (preferably 3.9)
 
 to build the whole project with reports in th main directory execute the following command:
 mvn clean install site
 
 to run the app:
+First, the DB container needs to be running, execute the following commands in shell:
+docker compose up (preferably with -d option)
+to run the executable:
 cd ./View
-mvn javafx:run
+mvn javafx:run (also with clean option)
 
-In-dev:
--support for Docker containers
--lesser changes in controller components
--changes in DAO component (f. e. introducing the deletion of the specific board, bugfixes in saving to file) 
+to turn down the container:
+docker-compose down
+
+
+
 
 
 
