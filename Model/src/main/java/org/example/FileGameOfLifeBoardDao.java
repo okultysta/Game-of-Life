@@ -10,6 +10,9 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
     private final String filename;
 
     public FileGameOfLifeBoardDao(String filename) {
+        if (!filename.endsWith(".ser")) {
+            filename += ".ser";
+        }
         this.filename = filename;
     }
 
@@ -42,7 +45,7 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         List<String> boardsNames = new ArrayList<>();
         try {
             for (File file : files) {
-                if (!file.getName().endsWith(".ser")) {
+                if (!file.getName().endsWith(".ser") && file.getName().contains(".")) {
                     continue;
                 }
                 boardsNames.add(file.getName());
@@ -57,6 +60,9 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
     public void delete(String boardName) throws DaoException {
         File directoryPath = new File("./");
         File[] files = directoryPath.listFiles();
+        if (files == null) {
+            throw new DaoException("FileReadException", null);
+        }
         try {
             for (File file : files) {
                 if (file.getName().startsWith(boardName)) {
@@ -65,10 +71,11 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
                     }
                 }
             }
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             throw new DaoException("FileReadException", e);
         }
     }
+
 
     @Override
     public void close() {

@@ -43,15 +43,15 @@ public class FileGameOfLifeBoardDaoTest {
 
     }
 
-    /*
+
     @Test
     public void FileGameOfLifeBoardDaoReadTest() throws Exception {
         Dao<GameOfLifeBoard> dao2 = factory.getFileDao("tralala.ser");
         GameOfLifeBoard board2= new GameOfLifeBoard(5, 2, simulator);
         dao2.write(board2);
-        GameOfLifeBoard boardRead = dao.read();
-        assertEquals(board2.getBoard().length, boardRead.getBoard().length);
-        assertEquals(board2.getBoard()[0].length, boardRead.getBoard()[0].length);
+        GameOfLifeBoard boardRead = dao2.read();
+        assertEquals(5, boardRead.getBoard().length);
+        assertEquals(2, boardRead.getBoard()[0].length);
         assertEquals(board2, boardRead);
         assertEquals(board2.getRow(0), boardRead.getRow(0));
         assertEquals(board2.getColumn(1), boardRead.getColumn(1));
@@ -64,12 +64,24 @@ public class FileGameOfLifeBoardDaoTest {
 
     }
 
-     */
+
 
     @Test
-    public void FileGameOfLifeBoardDaoCloseTest() throws Exception {
+    public void FileGameOfLifeBoardDaoCloseTest()  {
         FileGameOfLifeBoardDao writer1 = factory.getFileDao(filename);
         assertDoesNotThrow(writer1::close);
+
+    }
+    @Test
+    public void deleteFileTest() {
+        try (Dao<GameOfLifeBoard> destroyer = factory.getFileDao("trial")) {
+            destroyer.write(board);
+            assertTrue(destroyer.getBoardsNames().contains("trial.ser"));
+            destroyer.delete("trial");
+            assertFalse(destroyer.getBoardsNames().contains("trial.ser"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

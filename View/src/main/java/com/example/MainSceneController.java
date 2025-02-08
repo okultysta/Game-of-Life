@@ -49,10 +49,6 @@ public class MainSceneController {
     private ContextMenu fileMenu;
 
     @FXML
-    private Button readJdbc;
-    @FXML
-    private Button writeDB;
-    @FXML
     private Button langConfirm;
     @FXML
     private ChoiceBox<Language> langChooseMain;
@@ -62,10 +58,6 @@ public class MainSceneController {
     private Button backToStart;
     @FXML
     private Button doStep;
-    @FXML
-    private Button saveFile;
-    @FXML
-    private Button readFile;
     @FXML
     private GridPane mainBoard;
     @FXML
@@ -164,6 +156,7 @@ public class MainSceneController {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
+        logger.warn(errorMessages.get("boardSaved") + " " + fileNameCurr);
     }
 
     public void readFromFile(ActionEvent actionEvent) {
@@ -210,7 +203,7 @@ public class MainSceneController {
             logger.error(e.getMessage());
         }
 
-        setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
+        setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard()[0].length);
         updateBoard();
 
     }
@@ -247,16 +240,12 @@ public class MainSceneController {
         errorMessages.clear();
         boardTitle.setText(bundle.getString("boardTitle"));
         langChooseTitle.setText(bundle.getString("langChooseTitle"));
-        saveFile.setText(bundle.getString("saveFile"));
-        readFile.setText(bundle.getString("readFile"));
         doStep.setText(bundle.getString("doStep"));
         backToStart.setText(bundle.getString("goBackToStart"));
         langConfirm.setText("OK");
         errorMessages.put("error", bundle.getString("error"));
         errorMessages.put("noLanguage", bundle.getString("noLanguage"));
         errorMessages.put("noFile", bundle.getString("noFile"));
-        writeDB.setText(bundle.getString("writeDB"));
-        readJdbc.setText(bundle.getString("readJDBC"));
         databaseAccess.setText(bundle.getString("db"));
         fileAccess.setText(bundle.getString("file"));
         errorMessages.put("noDB", bundle.getString("noDB"));
@@ -483,7 +472,7 @@ public class MainSceneController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(null);
         alert.setHeaderText(null);
-        alert.setContentText(errorMessages.get("boardDeleted") + " "+ tableCurr);
+        alert.setContentText(errorMessages.get("boardDeleted") + " " + tableCurr);
         alert.showAndWait();
     }
 
@@ -500,7 +489,7 @@ public class MainSceneController {
             logger.warn(errorMessages.get(e.getMessage()));
         } catch (Exception e) {
             showError(e.getMessage());
-            logger.warn(errorMessages.get("boardDeleted")+" "+dbNameCurr);
+            logger.warn(errorMessages.get("boardDeleted") + " " + dbNameCurr);
         }
     }
 }

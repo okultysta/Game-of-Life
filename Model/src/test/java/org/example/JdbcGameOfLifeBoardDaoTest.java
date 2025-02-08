@@ -73,10 +73,9 @@ public class JdbcGameOfLifeBoardDaoTest {
 
     @Test
     public void testGetBoardNames() throws DaoException {
-        try (JdbcGameOfLifeBoardDao reader = new JdbcGameOfLifeBoardDao()) {
-            assertDoesNotThrow(() -> {
-                reader.getBoardsNames();
-            });
+        try (JdbcGameOfLifeBoardDao reader = new JdbcGameOfLifeBoardDao("bonjour")) {
+           reader.write(new GameOfLifeBoard(4, 3, gameOfLifeSimulator));
+           assertTrue(reader.getBoardsNames().contains("bonjour"));
         }
     }
     @Test
