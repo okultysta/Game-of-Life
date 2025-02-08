@@ -1,5 +1,6 @@
 package org.example;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,8 @@ public class JdbcGameOfLifeBoardDaoTest {
     public void JDBCWriteReadTest() {
         GameOfLifeSimulator gameOfLifeSimulator = new PlainGameOfLifeSimulator();
         GameOfLifeBoard board = new GameOfLifeBoard(4, 3, gameOfLifeSimulator);
-        try (JdbcGameOfLifeBoardDao writer =  new JdbcGameOfLifeBoardDao();
-        JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao()) {
+        try (JdbcGameOfLifeBoardDao writer = new JdbcGameOfLifeBoardDao();
+             JdbcGameOfLifeBoardDao reader = new JdbcGameOfLifeBoardDao()) {
             writer.write(board);
             GameOfLifeBoard boardRead = writer.read();
             assertEquals(board, boardRead);
@@ -25,9 +26,10 @@ public class JdbcGameOfLifeBoardDaoTest {
             logger.error(e.getMessage());
         }
     }
+
     @Test
     public void closeTest() throws Exception {
-        JdbcGameOfLifeBoardDao writer =  new JdbcGameOfLifeBoardDao();
+        JdbcGameOfLifeBoardDao writer = new JdbcGameOfLifeBoardDao();
         writer.close();
         assertTrue(writer.isClosed());
     }
@@ -36,10 +38,11 @@ public class JdbcGameOfLifeBoardDaoTest {
     public void testTransactionRollbackOnError() {
         GameOfLifeBoard invalidBoard = null;
         assertThrows(NullPointerException.class, () -> {
-            try (JdbcGameOfLifeBoardDao dao = new JdbcGameOfLifeBoardDao("invalidBoard")) {
+            try (Dao<GameOfLifeBoard> dao = new JdbcGameOfLifeBoardDao("invalidBoard")) {
                 dao.write(invalidBoard);
             }
         });
+
 
     }
 
@@ -70,10 +73,30 @@ public class JdbcGameOfLifeBoardDaoTest {
 
     @Test
     public void testGetBoardNames() throws DaoException {
-        try (JdbcGameOfLifeBoardDao reader =  new JdbcGameOfLifeBoardDao()) {
+        try (JdbcGameOfLifeBoardDao reader = new JdbcGameOfLifeBoardDao()) {
             assertDoesNotThrow(() -> {
                 reader.getBoardsNames();
             });
+        }
+    }
+    @Test
+    public void deleteBoardTest() throws DaoException {
+        try (JdbcGameOfLifeBoardDao destroyer = new JdbcGameOfLifeBoardDao("trial")) {
+            destroyer.write(new GameOfLifeBoard(4, 3, gameOfLifeSimulator));
+            assertTrue(destroyer.getBoardsNames().contains("trial"));
+            destroyer.delete("trial");
+            assertFalse(destroyer.getBoardsNames().contains("trial"));
+
+        }
+    }
+    @AfterAll
+    public static void afterAll() {
+        try (JdbcGameOfLifeBoardDao destroyer = new JdbcGameOfLifeBoardDao()) {
+            destroyer.delete("default");
+            destroyer.delete("testBoard");
+            destroyer.delete("invalidBoard");
+        } catch (DaoException e) {
+            e.printStackTrace();
         }
     }
 

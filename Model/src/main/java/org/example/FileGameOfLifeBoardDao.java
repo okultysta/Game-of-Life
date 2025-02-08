@@ -42,12 +42,32 @@ public class FileGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         List<String> boardsNames = new ArrayList<>();
         try {
             for (File file : files) {
+                if(!file.getName().endsWith(".ser")) {
+                    continue;
+                }
                 boardsNames.add(file.getName());
             }
         } catch (NullPointerException e) {
             throw new DaoException("FileReadException", e);
         }
         return boardsNames;
+    }
+
+    @Override
+    public void delete(String boardName) throws DaoException {
+        File directoryPath = new File("./");
+        File[] files = directoryPath.listFiles();
+        try{
+            for (File file : files) {
+                if(file.getName().startsWith(boardName)) {
+                    if(!file.delete()){
+                        throw new DaoException("FileReadException", null);
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+            throw new DaoException("FileReadException", e);
+        }
     }
 
     @Override

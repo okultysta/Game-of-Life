@@ -10,4 +10,6 @@ public interface Dao<T> extends AutoCloseable {
 
     List<String> getBoardsNames() throws DaoException;
 
+    void delete(String boardName) throws DaoException;
+
 }

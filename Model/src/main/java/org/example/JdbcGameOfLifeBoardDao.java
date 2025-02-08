@@ -1,13 +1,14 @@
 package org.example;
 
 
-
 import java.sql.*;
 import java.util.ArrayList;
 
 public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseable {
     private final String url = "jdbc:postgresql://localhost:5455/GameOfLife";
     private final String boardName;
+    private final String username = "user";
+    private final String password = "password";
     boolean closed = false;
 
     public JdbcGameOfLifeBoardDao() {
@@ -20,7 +21,7 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
 
     @Override
     public GameOfLifeBoard read() throws DaoException {
-        try (Connection connection = DriverManager.getConnection(url, "user", "password")) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
 
             try (PreparedStatement checkBoardStatement = connection.prepareStatement(
                     "SELECT COUNT(*) FROM board WHERE name = ?")) {
@@ -84,25 +85,11 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
 
     @Override
     public void write(GameOfLifeBoard obj) throws DaoException {
-        try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
             connection.setAutoCommit(false); // Start transaction
 
             try {
-                try (Statement statement = connection.createStatement()) {
-                    statement.execute("CREATE TABLE IF NOT EXISTS board ("
-                            + "board_id SERIAL PRIMARY KEY, "
-                            + "name VARCHAR(100) NOT NULL"
-                            + ");");
-
-                    statement.execute("CREATE TABLE IF NOT EXISTS cell ("
-                            + "board_id INTEGER, "
-                            + "state BOOLEAN, "
-                            + "x INTEGER, "
-                            + "y INTEGER, "
-                            + "PRIMARY KEY (board_id, x, y), " + "FOREIGN KEY (board_id) REFERENCES board(board_id) "
-                            + "ON DELETE CASCADE ON UPDATE CASCADE"
-                            + ");");
-                }
+                createTablesIfNotExists(connection);
 
                 try (PreparedStatement deleteCellsStatement = connection.prepareStatement(
                         "DELETE FROM cell WHERE board_id IN (SELECT board_id FROM board WHERE name = ?)")) {
@@ -170,7 +157,8 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
 
     public ArrayList<String> getBoardsNames() throws DaoException {
         ArrayList<String> boardsNames = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, "postgres", "")) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            createTablesIfNotExists(connection);
             try (Statement statement = connection.createStatement();
                  ResultSet resultSet = statement.executeQuery("SELECT name FROM board")) {
 
@@ -183,9 +171,46 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
                 }
             }
         } catch (SQLException e) {
+
             throw new DaoException("BoardsNamesError", e);
         }
         return boardsNames;
     }
 
+    @Override
+    public void delete(String boardName) throws DaoException {
+        ArrayList<String> boardsNames = getBoardsNames();
+        if (!boardsNames.contains(boardName)) {
+            throw new ObjectNotFoundException("NoDB", null);
+        }
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            connection.setAutoCommit(false);
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("DELETE FROM board WHERE name = ?");
+        } catch (SQLException e) {
+            throw new DaoException("DbConnectError", e);
+        }
+    }
+
+    private void createTablesIfNotExists(Connection connection) throws DaoException {
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE IF NOT EXISTS board ("
+                    + "board_id SERIAL PRIMARY KEY, "
+                    + "name VARCHAR(100) NOT NULL"
+                    + ");");
+
+            statement.execute("CREATE TABLE IF NOT EXISTS cell ("
+                    + "board_id INTEGER, "
+                    + "state BOOLEAN, "
+                    + "x INTEGER, "
+                    + "y INTEGER, "
+                    + "PRIMARY KEY (board_id, x, y), " + "FOREIGN KEY (board_id) REFERENCES board(board_id) "
+                    + "ON DELETE CASCADE ON UPDATE CASCADE"
+                    + ");");
+
+        } catch (SQLException e) {
+            throw new DatabaseException("DbConnectError", e);
+        }
+
+    }
 }
