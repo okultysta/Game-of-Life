@@ -27,6 +27,7 @@ mvn clean install site
 to run the app:
 First, the DB container needs to be running, execute the following commands in shell:
 docker compose up (preferably with -d option)
+
 to run the executable:
 cd ./View
 mvn javafx:run (also with clean option)
