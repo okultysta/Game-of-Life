@@ -183,10 +183,26 @@ public class JdbcGameOfLifeBoardDao implements Dao<GameOfLifeBoard>, AutoCloseab
         if (!boardsNames.contains(boardName)) {
             throw new ObjectNotFoundException("NoDB", null);
         }
+
+        String sql = "DELETE FROM board WHERE name = ?";
+
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             connection.setAutoCommit(false);
-            Statement statement = connection.createStatement();
-            statement.executeUpdate("DELETE FROM board WHERE name = ?");
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, boardName);
+                int rowsAffected = statement.executeUpdate();
+
+                if (rowsAffected == 0) {
+
+                    throw new ObjectNotFoundException("NoDB", null);
+                }
+
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new DaoException("DbConnectError", e);
+            }
         } catch (SQLException e) {
             throw new DaoException("DbConnectError", e);
         }

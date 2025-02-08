@@ -28,6 +28,27 @@ import java.util.*;
 
 public class MainSceneController {
     @FXML
+    private MenuItem readDb;
+    @FXML
+    private MenuItem saveJdbc;
+    @FXML
+    private MenuItem deleteJdbc;
+    @FXML
+    private MenuItem readFromFile;
+    @FXML
+    private MenuItem saveToFile;
+    @FXML
+    private MenuItem deleteFromFile;
+    @FXML
+    private Button fileAccess;
+    @FXML
+    private Button databaseAccess;
+    @FXML
+    private ContextMenu databaseMenu;
+    @FXML
+    private ContextMenu fileMenu;
+
+    @FXML
     private Button readJdbc;
     @FXML
     private Button writeDB;
@@ -56,7 +77,6 @@ public class MainSceneController {
 
     public MainSceneController() {
     }
-
 
     public void initialize() {
         errorMessages = new TreeMap<>();
@@ -149,12 +169,7 @@ public class MainSceneController {
     public void readFromFile(ActionEvent actionEvent) {
         String fileNameCurr = "";
         try (Dao<GameOfLifeBoard> dao = factory.getFileDao()) {
-            ChoiceDialog<String> chooseBoard = new ChoiceDialog<>("", dao.getBoardsNames());
-            chooseBoard.setTitle(errorMessages.get("chooseBoard"));
-            chooseBoard.setHeaderText(errorMessages.get("chooseBoard") + "!");
-            chooseBoard.setContentText(errorMessages.get("chooseBoard") + ":");
-            chooseBoard.showAndWait();
-            fileNameCurr = chooseBoard.getSelectedItem();
+            fileNameCurr = chooseBoard(dao.getBoardsNames(), dao);
 
             if (fileNameCurr.isEmpty()) {
                 throw new FileException(errorMessages.get("FileReadError"), null);
@@ -195,7 +210,7 @@ public class MainSceneController {
             logger.error(e.getMessage());
         }
 
-        //setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
+        setCellsAndBindings(gameOfLifeBoard.getBoard().length, gameOfLifeBoard.getBoard().length);
         updateBoard();
 
     }
@@ -242,6 +257,8 @@ public class MainSceneController {
         errorMessages.put("noFile", bundle.getString("noFile"));
         writeDB.setText(bundle.getString("writeDB"));
         readJdbc.setText(bundle.getString("readJDBC"));
+        databaseAccess.setText(bundle.getString("db"));
+        fileAccess.setText(bundle.getString("file"));
         errorMessages.put("noDB", bundle.getString("noDB"));
         errorMessages.put("enterTableName", bundle.getString("enterTableName"));
         errorMessages.put("wrongScene", bundle.getString("wrongScene"));
@@ -260,6 +277,13 @@ public class MainSceneController {
         errorMessages.put("boardSaved", bundle.getString("boardSaved"));
         errorMessages.put("wrongInit", bundle.getString("wrongInit"));
         errorMessages.put("badBoardsNames", bundle.getString("badBoardsNames"));
+        errorMessages.put("boardDeleted", bundle.getString("boardDeleted"));
+        readDb.setText(bundle.getString("readJDBC"));
+        readFromFile.setText(bundle.getString("readFile"));
+        saveJdbc.setText(bundle.getString("writeDB"));
+        saveToFile.setText(bundle.getString("saveFile"));
+        deleteFromFile.setText(bundle.getString("deleteFile"));
+        deleteJdbc.setText(bundle.getString("deleteJDBC"));
     }
 
     private void updateBoard() {
@@ -354,16 +378,9 @@ public class MainSceneController {
         }
     }
 
-
     public void readJdbc(ActionEvent actionEvent) {
-        String dbNameCurr = "";
         try (JdbcGameOfLifeBoardDao dao = factory.getJdbcDao()) {
-            ChoiceDialog<String> chooseBoard = new ChoiceDialog<>("", dao.getBoardsNames());
-            chooseBoard.setTitle(errorMessages.get("chooseBoard"));
-            chooseBoard.setHeaderText(errorMessages.get("chooseBoard") + "!");
-            chooseBoard.setContentText(errorMessages.get("chooseBoard") + ":");
-            chooseBoard.showAndWait();
-            dbNameCurr = chooseBoard.getSelectedItem();
+            String dbNameCurr = chooseBoard(dao.getBoardsNames(), dao);
 
             if (dbNameCurr.isEmpty()) {
                 throw new DbReadWriteException(errorMessages.get("noDB"), null);
@@ -385,6 +402,15 @@ public class MainSceneController {
             showError(errorMessages.get(e.getMessage()));
             logger.error("DAO exception: {}", e.getMessage());
         }
+    }
+
+    private String chooseBoard(List<String> boardsNames, Dao<GameOfLifeBoard> dao) throws DaoException {
+        ChoiceDialog<String> chooseBoard = new ChoiceDialog<>("", boardsNames);
+        chooseBoard.setTitle(errorMessages.get("chooseBoard"));
+        chooseBoard.setHeaderText(errorMessages.get("chooseBoard") + "!");
+        chooseBoard.setContentText(errorMessages.get("chooseBoard") + ":");
+        chooseBoard.showAndWait();
+        return chooseBoard.getSelectedItem();
     }
 
     private String getBoardName() throws ObjectNotFoundException {
@@ -436,4 +462,45 @@ public class MainSceneController {
         alert.showAndWait();
     }
 
+    public void dbOptions(MouseEvent event) {
+        databaseMenu.show(databaseAccess, event.getScreenX(), event.getScreenY());
+    }
+
+
+    public void fileOptions(MouseEvent event) {
+        fileMenu.show(fileAccess, event.getScreenX(), event.getScreenY());
+    }
+
+    public void deleteFromFile(ActionEvent event) {
+        String tableCurr = "";
+        try (Dao<GameOfLifeBoard> dao = factory.getFileDao()) {
+            tableCurr = chooseBoard(dao.getBoardsNames(), dao);
+            dao.delete(tableCurr);
+        } catch (Exception e) {
+            logger.warn(e.getMessage());
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(null);
+        alert.setHeaderText(null);
+        alert.setContentText(errorMessages.get("boardDeleted") + " "+ tableCurr);
+        alert.showAndWait();
+    }
+
+    public void deleteJdbc(ActionEvent actionEvent) {
+        String dbNameCurr = "";
+        try (Dao<GameOfLifeBoard> dao = factory.getJdbcDao()) {
+            dbNameCurr = chooseBoard(dao.getBoardsNames(), dao);
+            if (dbNameCurr.isEmpty()) {
+                throw new DbReadWriteException(errorMessages.get("noDB"), null);
+            }
+            dao.delete(dbNameCurr);
+        } catch (DaoException e) {
+            showError(errorMessages.get(e.getMessage()));
+            logger.warn(errorMessages.get(e.getMessage()));
+        } catch (Exception e) {
+            showError(e.getMessage());
+            logger.warn(errorMessages.get("boardDeleted")+" "+dbNameCurr);
+        }
+    }
 }
