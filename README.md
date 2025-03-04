@@ -1,4 +1,4 @@
-This is the project I have been working on  with my college mate (https://github.com/okultysta) for Component Programming course held during winter semester 2024/2025.
+This is the project I have been working on  with my college mate (https://github.com/Kacperux1) for Component Programming course held during winter semester 2024/2025.
 
 This JavaFX application implements the famous simulation "Game of Life" in a form of desktop application.
 
